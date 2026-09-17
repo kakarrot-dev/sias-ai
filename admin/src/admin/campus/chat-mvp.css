@@ -1,0 +1,25 @@
+.chat-config-content { min-width: 0; }
+.chat-config-content .field { margin-bottom: 16px; }
+.chat-config-content .field:last-child { margin-bottom: 0; }
+.chat-config-content textarea { width: 100%; resize: vertical; }
+.chat-expert-editor > .page-heading { align-items: flex-start; gap: 24px; }
+.chat-expert-editor > .page-heading > div:first-child { min-width: 0; }
+.chat-expert-editor > .page-heading .page-actions { flex-shrink: 0; }
+.expert-editor-status { display: flex; align-items: center; gap: 12px; min-height: 32px; margin: -10px 0 16px; color: var(--text-secondary, #697067); font-size: 13px; }
+.expert-lifecycle-actions { display: flex; gap: 8px; margin-left: auto; }
+.chat-snapshot-prompt { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; }
+.chat-expert-table th:first-child { width: 32%; }
+.chat-expert-table td:first-child small { max-width: 340px; white-space: normal; }
+.chat-expert-editor .editor-tabs .button[aria-current=page] { color: #4e653e; border-bottom: 2px solid #647650; border-radius: 0; }
+.expert-config-sections { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 24px; }
+.expert-config-sections .button[aria-current=page] { background: #eaf0e3; border-color: #a1b38f; color: #3f5732; }
+.expert-format-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; border: 0; padding: 0; margin: 0; }
+.expert-format-option { display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 14px 16px; border: 1px solid #e0e5da; border-radius: 8px; cursor: pointer; }
+.expert-format-option:has(input:checked) { background: #f2f5ed; border-color: #9eae90; }
+.expert-format-option input { flex-shrink: 0; accent-color: #556f43; }
+.expert-format-option strong { display: block; font-size: 14px; font-weight: 500; }
+.expert-format-option small { display: block; margin-top: 4px; color: var(--text-secondary, #697067); font-size: 12px; }
+.expert-execution-details article { border: 1px solid #e4e7df; border-radius: 8px; padding: 14px; margin-bottom: 12px; overflow-wrap: anywhere; }
+.expert-execution-details p { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 800px) { .expert-format-options { grid-template-columns: repeat(2, minmax(0, 1fr)); } .chat-expert-editor > .page-heading { flex-wrap: wrap; } .chat-expert-editor > .page-heading .page-actions { margin-left: auto; } }
+@media (max-width: 480px) { .expert-format-options { grid-template-columns: minmax(0, 1fr); } }

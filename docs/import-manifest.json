@@ -1,0 +1,1369 @@
+{
+  "snapshotAt": "2026-09-17T08:21:03.527358+00:00",
+  "sources": {
+    "frontend": {
+      "workspace": "AI Employee OS",
+      "repository": "https://github.com/kakarrot-dev/AI-Employee-OS.git",
+      "branch": "main",
+      "baseCommit": "b5ae5701ba382262758a3ec351ad6b6f874366c9",
+      "includesUncommittedChanges": true,
+      "worktreeStatus": "M docs/PRD-digital-employee-frontend.md\n M docs/macos-client-prototype-parity-matrix.md\n M prototypes/macos-client-v2/FEISHU_MEETING_V01.md\n M prototypes/macos-client-v2/LAYOUT_CONTRACT.md\n M prototypes/macos-client-v2/index.html\n M prototypes/macos-client-v2/scripts/check-layout-contract.mjs\n M prototypes/macos-client-v2/src/App.tsx\n M prototypes/macos-client-v2/src/layout.css\n M prototypes/macos-client-v2/src/main.tsx\n M prototypes/macos-client-v2/src/styles.css\n M prototypes/macos-client-v2/src/typography.css\n M src/renderer/src/RecruitmentCatalog.tsx\n M src/renderer/src/components/client-ui.test.tsx\n M src/renderer/src/components/client-ui.tsx\n M src/renderer/src/web-prototype.test.tsx\n?? prototypes/macos-client-v2/SINGLE_AGENT_V01.md\n?? prototypes/macos-client-v2/src/AgentCatalogPage.tsx\n?? prototypes/macos-client-v2/src/ArchivedConversationsPage.tsx\n?? prototypes/macos-client-v2/src/CreateExpertPage.tsx\n?? prototypes/macos-client-v2/src/NewConversationWelcome.tsx\n?? prototypes/macos-client-v2/src/campus-agent-catalog.ts\n?? prototypes/macos-client-v2/src/campus-shell.css\n?? prototypes/macos-client-v2/src/expert-capabilities.json\n?? prototypes/macos-client-v2/src/expert-creation.css\n?? prototypes/macos-client-v2/src/expert-creation.ts\n?? prototypes/macos-client-v2/src/new-conversation.css\n?? prototypes/macos-client-v2/src/student-agent-catalog.ts"
+    },
+    "admin": {
+      "workspace": "AI Employee OS-web-admin",
+      "repository": "https://github.com/kakarrot-dev/AI-Employee-OS.git",
+      "branch": "web-admin",
+      "baseCommit": "57f4aa89615b442b0e914cdf9cc3922c8aae9606",
+      "includesUncommittedChanges": true,
+      "worktreeStatus": "M docs/web-admin-spec.md\n M package-lock.json\n M package.json\n M src/admin/AgentCatalog.tsx\n M src/admin/AgentCreation.tsx\n M src/admin/AgentFields.tsx\n M src/admin/AgentManagement.tsx\n M src/admin/App.tsx\n M src/admin/CapabilityPicker.tsx\n M src/admin/EntityEditor.tsx\n M src/admin/PrototypePanels.tsx\n D src/admin/QuickBuilder.tsx\n M src/admin/agent-creation.test.tsx\n M src/admin/agent-management-ui.test.tsx\n M src/admin/campus/CampusCenter.tsx\n M src/admin/campus/CapabilityFields.tsx\n M src/admin/campus/DefinitionFields.tsx\n M src/admin/campus/ExpertDebug.tsx\n M src/admin/campus/ExpertForm.tsx\n M src/admin/campus/ExpertResources.tsx\n M src/admin/campus/Fields.tsx\n M src/admin/campus/InteractionConfig.tsx\n M src/admin/campus/InteractionPreview.tsx\n M src/admin/campus/InteractionSetupPreview.tsx\n M src/admin/campus/McpBindings.tsx\n M src/admin/campus/Records.tsx\n M src/admin/campus/TeamComposer.tsx\n M src/admin/campus/Testing.tsx\n M src/admin/campus/actions.ts\n M src/admin/campus/agent-definition.test.ts\n M src/admin/campus/agent-definition.ts\n M src/admin/campus/campus-ui.test.tsx\n M src/admin/campus/campus.css\n M src/admin/campus/campus.test.ts\n M src/admin/campus/capability-fields.test.tsx\n M src/admin/campus/definition-wizard.test.tsx\n M src/admin/campus/expert-form.css\n M src/admin/campus/expert-form.test.tsx\n M src/admin/campus/expert-form.ts\n M src/admin/campus/interaction-model.ts\n M src/admin/campus/interaction.css\n M src/admin/campus/interaction.test.tsx\n M src/admin/campus/management-v11.test.ts\n M src/admin/campus/model.ts\n M src/admin/campus/wizard-test-helpers.ts\n M src/admin/capabilities.json\n M src/admin/capability-picker.test.tsx\n M src/admin/capability-search.ts\n M src/admin/prototype-store.ts\n M src/admin/shared.ts\n?? \"docs/PRD-\\346\\231\\272\\350\\203\\275\\344\\275\\223\\344\\270\\255\\345\\277\\203\\345\\216\\237\\345\\236\\213\\351\\207\\215\\346\\236\\204.md\"\n?? docs/audits/2026-09-16-agent-center-ux-review.md\n?? docs/audits/2026-09-16-agent-creation-readability.md\n?? docs/audits/2026-09-16-agent-input-output-design.md\n?? docs/audits/2026-09-16-single-agent-scope.md\n?? docs/audits/2026-09-16-team-assembly-boundary.md\n?? docs/audits/2026-09-16-team-creation-ux.md\n?? docs/audits/2026-09-16-team-input-output-ownership.md\n?? docs/audits/2026-09-17-c-user-center.md\n?? docs/audits/2026-09-17-c-user-oidc-fields.md\n?? docs/audits/2026-09-17-capability-batch-upload.md\n?? docs/audits/2026-09-17-chat-mvp.md\n?? docs/audits/2026-09-17-expert-capability-mvp.md\n?? docs/audits/2026-09-17-oidc-user-run-design.md\n?? docs/audits/2026-09-17-relay-model-catalog.md\n?? src/admin/CapabilityUpload.tsx\n?? src/admin/ModelAccessPanels.tsx\n?? src/admin/ModelCallsPanel.tsx\n?? src/admin/ModelCenter.tsx\n?? src/admin/RunCenter.tsx\n?? src/admin/UserCenter.tsx\n?? src/admin/campus/AgentNavigation.tsx\n?? src/admin/campus/AssistantFields.tsx\n?? src/admin/campus/AssistantManagement.tsx\n?? src/admin/campus/AssistantSettings.tsx\n?? src/admin/campus/CaptainCapabilities.tsx\n?? src/admin/campus/ChatAgentWorkspace.tsx\n?? src/admin/campus/ConfigReadView.tsx\n?? src/admin/campus/ExpertExecutionFields.tsx\n?? src/admin/campus/InputOutputWorkspace.tsx\n?? src/admin/campus/ReleaseSummary.tsx\n?? src/admin/campus/TeamCreationReview.tsx\n?? src/admin/campus/UserInputForm.tsx\n?? src/admin/campus/agent-workspace.css\n?? src/admin/campus/availability.ts\n?? src/admin/campus/chat-mvp.css\n?? src/admin/campus/config-summary.ts\n?? src/admin/campus/input-output-design.test.tsx\n?? src/admin/campus/single-agent-scope.test.tsx\n?? src/admin/campus/skills/campus-assistant/SKILL.md\n?? src/admin/campus/skills/campus-captain/SKILL.md\n?? src/admin/campus/team-creation.css\n?? src/admin/campus/team-creation.test.tsx\n?? src/admin/campus/team-input-output.test.ts\n?? src/admin/campus/ux-review.test.tsx\n?? src/admin/capability-import.test.tsx\n?? src/admin/capability-import.ts\n?? src/admin/capability-upload.css\n?? src/admin/chat-mvp.test.tsx\n?? src/admin/chat-records.ts\n?? src/admin/model-access.css\n?? src/admin/model-access.test.tsx\n?? src/admin/model-access.ts\n?? src/admin/model-center.css\n?? src/admin/model-center.test.tsx\n?? src/admin/model-center.ts\n?? src/admin/public/designs/interaction-handoff.html\n?? src/admin/run-center.css\n?? src/admin/run-center.test.tsx\n?? src/admin/user-center-model.ts\n?? src/admin/user-center.css\n?? src/admin/user-center.test.tsx\n?? src/admin/user-directory.ts"
+    }
+  },
+  "note": "Files listed here are byte-for-byte source snapshots. Package manifests, dependency locks, root documentation and frontend Vite config are adapted for independent Web usage.",
+  "files": [
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/FEISHU_MEETING_V01.md",
+      "sha256": "14ba7b19ca72f7a34a56951ccee5c4c14466fc6c85f729fb0916fa960079f5ae"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/LAYOUT_CONTRACT.md",
+      "sha256": "7c2e397d6ff6e3f5d0deabdf917c452aab59121fcf0c77dfa2e6f24a0ff93bb6"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/SINGLE_AGENT_V01.md",
+      "sha256": "10a555d841f6e1559e0279c23b3640857a5209a5736e04842337bc42721e0717"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/TYPOGRAPHY_CONTRACT.md",
+      "sha256": "0ebe137ca2f038caf1f3ef7c03427890fd8f2e6680eb240d33212a421e99f5c1"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/index.html",
+      "sha256": "6656eb54a1a925fd612926a5a2f6b2c95ba86ad4b50bee35536a9396fbdbd5cd"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/scripts/check-layout-contract.mjs",
+      "sha256": "e23b1c3f3f6636412ac866582435dcbb498bc42e8218074850b202a4c6759cb1"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/scripts/check-typography-contract.mjs",
+      "sha256": "9cf356e570f93feac2231396793e284958714337cf67d3b1837b8d02e6422875"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/AgentCatalogPage.tsx",
+      "sha256": "4eede95b7f29b876e3fea541cdbb5fa7250fdf597befdfd9a4d670f285e54c0f"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/App.tsx",
+      "sha256": "b40b77223ddd1a00cdd38fa5a347ea9935a023982f465d8636fab4f0560073b1"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/ArchivedConversationsPage.tsx",
+      "sha256": "3f00027cbed8de35294f906a483a142eefffa546e2b4b44c22c6b8876909d1ff"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/CreateExpertPage.tsx",
+      "sha256": "8c5412b78809bcb631598d7a32595a21f5bd2e67901388b53a0fa31175020ddf"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/FeishuMeetingPage.tsx",
+      "sha256": "85ea06976ebcd1208178891f1875e94b1ce3be66182b9d489a2740ecc3c4fe51"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/NewConversationWelcome.tsx",
+      "sha256": "e12d3efea52824ff9a2f4847db01d0f6250992a0ab58d69ad263e23bfefbd0cd"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/campus-agent-catalog.ts",
+      "sha256": "b155a3e878cd75c44db5e58e23d44be3cc29665d0855c990abbe222c94c15eec"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/campus-shell.css",
+      "sha256": "233a4f11d20159a347cffd143ebafb4fe3c8f8651aa75e75ff280a8530370662"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/expert-capabilities.json",
+      "sha256": "036cc81b053c7c763a472793997a02dcfe4fdb715acccdcdd8816cc14ae0ad09"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/expert-creation.css",
+      "sha256": "a0f6a5308d084ce442aed01a31331df60b990e368a7e497afada9dd55f63b6c5"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/expert-creation.ts",
+      "sha256": "b75201f3e65c61e828e2fd53218948ed1a038ac3756abc3c7a0424334a778f5c"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/feishu-meeting-demo.ts",
+      "sha256": "15c51108310e3d93d320c5359a1d7bcc6b452034096b9b17dacf3256c3620ea6"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/feishu-meeting.css",
+      "sha256": "6f8b8d8139594fa0cb634554679c473dbcc937991fc4c0c6808f2348e5c88eee"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/layout.css",
+      "sha256": "6ff5aec29e9ac26793fb4e500764e8dda8491ccf15d7a4c73e1de0aee97a7f83"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/main.tsx",
+      "sha256": "30da7ece43f7144b1e0d3d0b86d0cb08aafe7a20096736c1e47ad3bc5163020a"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/new-conversation.css",
+      "sha256": "7c5239ee49a586b585afd2bc48f50d48cac844ed3ac15ab5f8024d9b12ecda43"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/student-agent-catalog.ts",
+      "sha256": "ca8fed50d1465f60a32edc60cbbfdc42933998e8a4ae755d013b6e3fff52d44a"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/styles.css",
+      "sha256": "94b05d96931b68c3342df4d177ebb9593913ad69b9d4f4ad2b3903e93b840066"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/typography.css",
+      "sha256": "55fcc2e8b913ed63c5d89b31eae5448acd550dec384537100a908c48aba52b5c"
+    },
+    {
+      "source": "frontend",
+      "path": "prototypes/macos-client-v2/src/useFeishuMeetingSessions.ts",
+      "sha256": "8e2ea294438a072175e492e10f7e7151d6bb0ed0b51dece002263b4c101ba0b3"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/index.html",
+      "sha256": "b956dad95f22269d6083a354103e9e9c977d2c7cbabcb2843837c1c34a53775d"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/App.test.tsx",
+      "sha256": "ecd8fd0e44eb5406bf67ccbb03344a328388b34d8b33fa05edd6f35cdd5e5159"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/App.tsx",
+      "sha256": "91e617960074b8e69a0b48b5f58f6b629df239e8a10dc2330f16ff8d6a64c2bc"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/ConnectionsCatalog.test.tsx",
+      "sha256": "3722a92ff0c9821447b342861a52ec733cf32b0eb486c5cf9f2ac024622bf60c"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/ConnectionsCatalog.tsx",
+      "sha256": "bac566a5879681538c454a35f308f196f732bbfd692db41802b306a19c223f7b"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/ExpertGroupAvatar.tsx",
+      "sha256": "14283c86dccf48da83a7c2cf2d5c1ab7bc6b1b0ad6b3697ba399d5cef81ecc6f"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/ExpertGroupDirectory.tsx",
+      "sha256": "773f1921fe3c9f8e12f40b1f9de965844681dbc0ec524570588c8b791e8b2efd"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/ExpertGroupModule.tsx",
+      "sha256": "7c1eca1988eeb014566ecb4180cb31e41f0a8fa767dd1c1db93967d4e8e4a875"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/ExpertProfiles.tsx",
+      "sha256": "121a0ca7137b177481c6967ea3fda95f951374e1e39a5a0d54811a26480c1991"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/FeishuMeetingPage.test.tsx",
+      "sha256": "5d94e1a6c9387cf3613a4b05e1226a5d75a93a06a5edb87b7ed2840856531bb6"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/MeetingActions.test.tsx",
+      "sha256": "4b6e12e1f032219d0b7fe1e293ff480aa7703281e0d7ef911fba4d7cd68377b7"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/MeetingActions.tsx",
+      "sha256": "ff229ca7b910c17b5fb0fab7827028ac0ec00a8f8e7817312942808a5d57bd4e"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/MemoryModule.tsx",
+      "sha256": "b2a944fbcc18f73a69c0bbd48e275e9b0826ea344c9e8e4cbf65f430e946e126"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/RecruitmentCatalog.tsx",
+      "sha256": "5fa713f8d6358ec6086b0eda78d0982f256f0bd5f52c2701dae2b316aaf2dadd"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/ResourceModule.tsx",
+      "sha256": "362e33ffcd6a81b63f21c9d41a89b149b37738a75dd086d3887b743be6e529f2"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/SystemModule.tsx",
+      "sha256": "f496d033d9fa8c0261cddf8dc3063628e97cee13a99b73dd5db3d5556645f521"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/TaskModule.tsx",
+      "sha256": "b5146dbd6ee68e21aff98511e9beccc3f2075ccb9cb4c820dd64b21cba42cb4e"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/TeamModule.tsx",
+      "sha256": "1f27cdd9f459cac7ea9bd3f3cad39079dd2a2cb9ec51f177edfd58dfba67b692"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/TeamsConnectionModal.tsx",
+      "sha256": "18131342a8785f0074368659572f10b1a79812279cad5c6a881401691ebd89db"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/TeamsParticipantList.tsx",
+      "sha256": "de6ef3607879028dfbfeca8343f632450e8cb07cb2b6077664a9e8213ce0ab38"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/alibaba-cloud.svg",
+      "sha256": "d4d04c74f1f43a8b5ea593c879f1e0eebc7e1b8cf784632a41efe6e6abba7623"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/baidu-netdisk.svg",
+      "sha256": "0fa81c5b651a45a86fd207e1da895a3c604399f8b2f5911a6fe12b233448883d"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/dingtalk.svg",
+      "sha256": "d32e4f324698f606401bd86d41fac89407e79af1ba3da7a8d32c2605bfe08bef"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/feishu.svg",
+      "sha256": "7928cd985c6dafdae7061ceac7230ccb6cf6da232b3e6c6fb4927cd2b53d366b"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/gitee.svg",
+      "sha256": "612f115f7f58cd1d6251c1fd9bfdf02acfe23d721da921da44fdf277aa2b8bd0"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/github.svg",
+      "sha256": "f2098f938d776360e6ea24178b54a58298005da99b795ca7f5a2660d592383e6"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/notion.svg",
+      "sha256": "af6f4a5b86b9174c054d5349fd0965306881d0a56019fabb2c221da392e952bd"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/teams.svg",
+      "sha256": "02b16e7cdf060e83b4419e9a067f06ef991ae6308b5dd540d5c61a2ae984efdf"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/wechat.svg",
+      "sha256": "871da2aa300d0f9fa2ba109c81761bd7306d37bf349f3520d64c53c1db865b60"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/wecom.svg",
+      "sha256": "62cc903b23a32f9111a3165b5d58cfa5e81e59df8ce2eccb0af760a122ffd823"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/wps.svg",
+      "sha256": "a20ab50c40b9338578fac7f9b359bee7d5f21fe2aa5041edcbb8fab0c02b44b7"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/connections/yuque.svg",
+      "sha256": "6ad019df54b98a6a448bb3f8eb42a91ca3d76fbe8c3351ee7ff24877073d1388"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/employee-avatars/document-writer.png",
+      "sha256": "8e20ee79d0733042f8491bb71eef74b0adb9dd3a0b886c6a2e9dd38a05f1baff"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/employee-avatars/feishu-meeting-specialist.png",
+      "sha256": "60919033ef3750cfa9f4ce0dc2b88d9d82fe04fbdea055cd1a1fe275488f3977"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/employee-avatars/feishu-researcher.png",
+      "sha256": "f3f05843142d3d6b1cef2a8350dfc080c8f3f6f3170974e3c1a85b4fee559a76"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/employee-avatars/network-intelligence.png",
+      "sha256": "aacb3d2fc1f7f93cd2efd3e78e3ccbd9fff41d08768410ae9eecba0c8ee2cf59"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/employee-avatars/recruitment-agents.png",
+      "sha256": "63a407c99984d74c9af99697c831fd85d9fb3ba630483eb5ea55a6cabe654d4b"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/employee-avatars/supervisor.png",
+      "sha256": "bdd90852746a5886a6db3ee5d682513b80f209fc5b915709d5e8cd6848c7c9ac"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/employee-avatars/teams-meeting-specialist.png",
+      "sha256": "cf624e2689c8ceb7639e986b327e79428c47a5b621cac2660f607e07e5c03695"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/assets/employee-avatars/tender-analyst.png",
+      "sha256": "1fe5029f6a0b31a80de7b4dc822d09819451ce78b01bf598b3e1bf408f876157"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/client-time.test.ts",
+      "sha256": "8bc0b12db423565186510ad0949ef9e8505b600e27686b5fbdc0f5d7f28ba063"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/client-time.ts",
+      "sha256": "6551304c416f52ff409bd39cf70a471514514d93aa6a45b8f37a3400419e8a49"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/components/client-icon-system.tsx",
+      "sha256": "f0b800bc79ca80bd08c0988cbef0558f33dd8068981a5018d8625aa6ba9969e4"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/components/client-ui.test.tsx",
+      "sha256": "ba85f450742a772d81aba9ab3384b55a27166dc055268dfd99b97d9f65712d80"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/components/client-ui.tsx",
+      "sha256": "16cc823774d8db109fa729cbd876926710b3fbfe1090a2f1fac9ac9255b3203d"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/components/message-ui.test.tsx",
+      "sha256": "d40dffd089d80d24bc7031919640f7657d5f4ed3e8400592d09924e0418c3205"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/components/message-ui.tsx",
+      "sha256": "8b8ac113b9b9135fa4787cc3713e94c6abb34a90f2e7f9c1c1d95a27c645186d"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/employee-avatar.test.ts",
+      "sha256": "62e0df453161b7749ba56f28cc156bc022832ede202f91715ba9105a70196602"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/employee-avatar.ts",
+      "sha256": "3efadd614557d8113fdba8ba04138cd662540f5207a7cd287a7cab7abb6e38fb"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/employee-status.test.ts",
+      "sha256": "4d975571815e5e732e2f6440f0b5d00b0d85ed4219e39c386ca1ac757569240e"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/employee-status.ts",
+      "sha256": "508f062e5f2ca0b56b271c6c725715066e769cf7642cf02473cd5d08204b50b8"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/env.d.ts",
+      "sha256": "185be50df7309158d4fcdcabd32762322b994ce764a694a84c55ac4aea822adc"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/feishu-meeting-prototype.test.ts",
+      "sha256": "2d108546104bb214bd5b5b2c312b406b76a094fef2316c0f6d3048cdbae64bb8"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/main.tsx",
+      "sha256": "e6eadcf70445772602e37b03569c78471c182bc2ca8d0156951c8dfd0391016b"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/prototype-adapter.css",
+      "sha256": "1ac09fef62f4aed50f9f2001926298f17d61ccd5a21825a06e4eafbeb58e22b2"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/styles.css",
+      "sha256": "5cc967a959bf98d58f37517a3bec496aa19e33a9da2a7d270581a1a8fdbc5ef8"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/test-setup.ts",
+      "sha256": "977afde26bba6a51325908cd7713cbfdc87d18f06b78b237c8f364c44864b7de"
+    },
+    {
+      "source": "frontend",
+      "path": "src/renderer/src/web-prototype.test.tsx",
+      "sha256": "5e1dcf773072b862bdf9a3a59fb21ff2ff905a735295d2a1f12bf7d44a286311"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/capability-contract.test.ts",
+      "sha256": "00deb4167452cd4df33cf4174148ec7df807e57a2697ae08507ceb56976f06ae"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/capability-contract.ts",
+      "sha256": "3e8e7d3546df3084c77bd90e560e4b76640aea365d79504e5c1c5dafd57c3351"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/chat-content-contract.ts",
+      "sha256": "5173144ace192d7e89b492e727ae9e9d4593a09983a65a0907c4bd804cd9dc1c"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/connection-contract.test.ts",
+      "sha256": "05d9750dbb871c57319f8bb97e580f40f22976711d0d7206eee799e0a3a3d761"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/connection-contract.ts",
+      "sha256": "ff52e26eb8ad0dab2b4509b5bd19c5240849fc99edafc5e1847ba34dafe13015"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/delivery-result-contract.ts",
+      "sha256": "1080a346e3a1b8dc91246e3e2d849825b07ac693ae3308862228a0676d236998"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/employee-contract.test.ts",
+      "sha256": "c55814d31b748a247bd0b786689a557e65848195738823fb12965e961046559e"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/employee-contract.ts",
+      "sha256": "5fa06318ff574c5439c8fd3e8e379b8a141b9b980ec1b382c1e8bf3a73ee2169"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/expert-group-contract.ts",
+      "sha256": "cf8ea88f1c405a8edad8dff9a89c20bb77a24c91b0a5e9ad5fc506f0cc462ce1"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/feishu-meeting-contract.ts",
+      "sha256": "6012ee8addfee71409b6eacefbc8a5a5a003dbe80048a4842ea7bd554204e0c2"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/layout-contract.ts",
+      "sha256": "49c79b5c1f11024760ff9a9238f4b85a6e328f7393f77734eb2f66c947a89cb8"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/memory-contract.ts",
+      "sha256": "65c1d872a6a638543c9ae777aa07872b7ecd1f9b09088bf5d7deb91923f03bf6"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/resource-contract.ts",
+      "sha256": "5998878c870505aa27325f4b49a250ea3d2ac9f4c7820b7e3af313e2c1c51104"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/runtime-contract.ts",
+      "sha256": "6e2b71a2055a72742473ec6451fa6ca0f2b4465319d762300b5767b3b0169c6a"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/supervisor-contract.test.ts",
+      "sha256": "46b66fd2f6bff7a0b8820ed9d136e93453842e3a4cf3fc16c8832bc10a9c1528"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/supervisor-contract.ts",
+      "sha256": "de3d130b2dd44aa0b49d7570e243c0f01e9e6875d5a86883ad1f9d4cb63da536"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/task-contract.test.ts",
+      "sha256": "eca3544544ed8541e66788c74be569297deb6056d5e05d977cdc6053bb92156c"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/task-contract.ts",
+      "sha256": "efdd4e55776445153f7913efb659d3f236a108c79a61836f5245f0040133efa7"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/teams-contract.ts",
+      "sha256": "4b944810cbb37070fa51e1c139b2497668b71d95f207ed5a7ff9c4e282560382"
+    },
+    {
+      "source": "frontend",
+      "path": "src/shared/usage-contract.ts",
+      "sha256": "c08d63ee206821eaf648736814ac14a3164b592a418eec8c186466909dcc9905"
+    },
+    {
+      "source": "frontend",
+      "path": "src/main/prototype-contract.test.ts",
+      "sha256": "746e030d8a09083afd1a377eefcdb80ba0e5ddbcbe6d14bfea70dfb4e8e5ad05"
+    },
+    {
+      "source": "frontend",
+      "path": "tsconfig.web.json",
+      "sha256": "89663e4ae8df8ab590a988b0295e69cd76bd7aac7f29abfdd996e9189a78e578"
+    },
+    {
+      "source": "frontend",
+      "path": "vitest.config.ts",
+      "sha256": "01555c918ed6dfcad04c9a3f3698879712cd5bdd0e106d6cd3f92601f2421d99"
+    },
+    {
+      "source": "frontend",
+      "path": ".npmrc",
+      "sha256": "ae37c40c64d0a0e8526b5087ee3177db4ff43daeccf7db2a07ac90949ddc5fc9"
+    },
+    {
+      "source": "frontend",
+      "path": ".nvmrc",
+      "sha256": "50b8995029fdebc8ca439031c6945518d38ab6ad38a3985c9ba386bfafebcb35"
+    },
+    {
+      "source": "frontend",
+      "path": "docs/PRD-digital-employee-frontend.md",
+      "sha256": "3a0923f88a4108ff9fc3365bb734123259561ba25a805731824079b07899c8cb"
+    },
+    {
+      "source": "frontend",
+      "path": "docs/macos-client-component-contract.md",
+      "sha256": "dab8b8442a2b3ca51b8952ada490909b158a00efb7ece936025e187b169dce80"
+    },
+    {
+      "source": "frontend",
+      "path": "docs/macos-client-prototype-parity-matrix.md",
+      "sha256": "9fd541966457a51d07e432fda459d9835ed94ab649394ae484184612274a94cd"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/AgentCatalog.tsx",
+      "sha256": "5594568a015682caa319aa3563187c245ac6d6bbc498e59b53fe43f710ed5d44"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/AgentCreation.css",
+      "sha256": "d6f7d269e3f62d89b6ea0644e513806480d05672c53137ce9ffa6fc23ce78751"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/AgentCreation.tsx",
+      "sha256": "57de8f34f3b9368b3ffcd6e4e2a0cb038d939138e473e8686f265689bebd2252"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/AgentExperienceFields.tsx",
+      "sha256": "213ad5d01e30cc259fd1fc0cd3286609a37c46547ef7ccdc2d4a1c7011f3ec8d"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/AgentFields.tsx",
+      "sha256": "1f09f9eed2391a2d140ba3da11cc5e240181f599957c92fc9ad947f4f69530b8"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/AgentFormPreview.tsx",
+      "sha256": "c893ef9e69d4929594e5e3a2c3df7cdbb95a7ac4f348d7bd759404501cce48a8"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/AgentForms.css",
+      "sha256": "ebdd30a01d50b2b2e6953d0213ab5651936f8e27649db042292813a3db299c8f"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/AgentManagement.css",
+      "sha256": "2fdab60445c7d9939819b081a8e4759de367e2b94a0e995295e671161a22dc4f"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/AgentManagement.tsx",
+      "sha256": "4ab8f0c66748127556f2c8d729dae352204d4dd1e65f739bad324290e16cde5a"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/App.tsx",
+      "sha256": "5f6f5088b0868244d2c4b0a11f69f304940bc4614af95e22d9f65e9f9e933265"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/CapabilityPicker.css",
+      "sha256": "67b444663dfc249e4147399102cb96969d9874341d8c6bb63afe427e5c33a076"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/CapabilityPicker.tsx",
+      "sha256": "e7895775f8ec48181e5ed1d085c9bb3eaa904cf3febed7392ab7b0fe45519d02"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/CapabilityUpload.tsx",
+      "sha256": "9b3a0846c6ba874f75a1c06f6057c8696b81d6bbf49cea28216d949be0eb8e5b"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/ContractFields.tsx",
+      "sha256": "de0fe25040fc943b8bace40643169608ea5e800c8484f34e2c4d7c5577d18332"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/EntityEditor.tsx",
+      "sha256": "761c514f1acb40d284d2d3d99040079166437ebb6215ab03514f8a614a4633e0"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/FormFields.tsx",
+      "sha256": "eb2ad75da0993096e9983063cfb0d4d01e81912441dd3f48b8f8011647901982"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/GuidedSetup.tsx",
+      "sha256": "fe954c8eafb01ae99f2f493d301e94f4a6a24653d252718f3786e83a3cb47a0e"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/ModelAccessPanels.tsx",
+      "sha256": "19f056e0107066456a32dd7d859e43b46ea1e47dab81bf8b70aa10350586bd61"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/ModelCallsPanel.tsx",
+      "sha256": "fc536a1330f1ad91cd5c50df5360174eb3727925beae975f6a7c96e4e74b7213"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/ModelCenter.tsx",
+      "sha256": "0de8fc2e9c088b54bbd2e604211112726d366b35a948b8d918779699f36f06d3"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/PrototypePanels.tsx",
+      "sha256": "d9989a12d26f9ac88142ff3920ec256781f5bb8e518d193a6d35d722bc2afe70"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/RunCenter.tsx",
+      "sha256": "2cca2d933ebc15b5d2fbdb865161e325a1fd807fdb5fb0d055b5dd2dec732c72"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/UserCenter.tsx",
+      "sha256": "a8d11afe2eb5b9105e4266d6429e7a2a0dfd5a7681e41f6ed5c63ed2eeca8ef7"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/agent-creation.test.tsx",
+      "sha256": "7bb73b482e8e2b4131c271f4a64465a865f04f80ae19db5403b2dbac9591cb80"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/agent-creation.ts",
+      "sha256": "012d2146d881f490b04f3aecc3627a4c33c58e9258e011befb0e521dcdf680a6"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/agent-experience.test.ts",
+      "sha256": "c498387cb2e40b1e19c29a468d7cd403c973341c3307181e6c3c1b90e162e2ca"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/agent-experience.ts",
+      "sha256": "e9bce425a4a20422e4aeabd6e148c846417591973818ad3b39b148072d0bf7a2"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/agent-forms.test.tsx",
+      "sha256": "6e4179517bd7ff6c72df57b27fa3a597f96d4d9589f0075c49364a6af51ff889"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/agent-management-ui.test.tsx",
+      "sha256": "a73431c3977dad0ac6a02fab29b6a24657c5ae49798d73769a3b8debc13e3612"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/agent-management.test.ts",
+      "sha256": "66ad74b4cb037efc48d9035bbbc9627e8ef589515930b8612b846f643f3f8437"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/agent-management.ts",
+      "sha256": "2a3663e990cc52ac9357d3f7377feb2dcf7d30dcf6ba26c12d79a8e9b10316bb"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/AgentNavigation.tsx",
+      "sha256": "254e26f342e4670335bab7e72cca8ab88dfe625cfd9e35f1accbb4128fad95a9"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/AssistantFields.tsx",
+      "sha256": "0ef5169dc3e6eef480cd95d4433ef02c5e1da26689fbf3e7f9167562b7482c2a"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/AssistantManagement.tsx",
+      "sha256": "a2c4b7126ed0b7922aef4a36b153f968c7dd6ab9ee56fc72f5c16161e0482725"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/AssistantSettings.tsx",
+      "sha256": "76daf90e9ad8537dc6ac51aa51f64131cc0100cc3d56b97afee7249d6cbdc434"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/CampusCenter.tsx",
+      "sha256": "9974c85da8640bcb2def1498cc59bca1ed6048cfc3534f28c6ea560be8f14664"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/CapabilityFields.tsx",
+      "sha256": "09fc22e44f5c5e02f99d793d1d632bd30449c7fde7bd13d14544145bad35d3da"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/CaptainCapabilities.tsx",
+      "sha256": "41789b5bb26ab96344e999f70d170f133f6cce5902d09c36bc2b92c9d5fb9a96"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/ChatAgentWorkspace.tsx",
+      "sha256": "49d2d8176dd0631206365f8828f6c8d9d6e0bc5a950c7626d343096c25b971de"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/ConfigReadView.tsx",
+      "sha256": "7b6dd8104f12db5849bdd8f93fd14bb9a6fd7feb501796fe0187c2a919658d64"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/DefinitionFields.tsx",
+      "sha256": "5777dc814ae245116ec6358532d8b4269f15ec771e2e3b0c0b8a05b4e5a9aa9b"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/ExpertCategorySettings.tsx",
+      "sha256": "65452d85d4c85625b109a1e054bebe44d0e945b46406118feac6e8b236c27fd9"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/ExpertDebug.tsx",
+      "sha256": "310708bffef2fe6d442f642ddf5024393d2de0b7dd2051d0e8aa26237afa9f29"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/ExpertExecutionFields.tsx",
+      "sha256": "b6dc62835d3b55b90391d9c4ce87f8c2551ecf5a1d423fafd40b3f768383735d"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/ExpertForm.tsx",
+      "sha256": "dd65d78361b74e65d3dd1c66db0d352a7a55caf29d32565d01923d14b0ffd4ba"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/ExpertResources.tsx",
+      "sha256": "f94d2cef461f5470dde156a87cc2028670cd9b98d3593f7129e9d2df56711732"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/Fields.tsx",
+      "sha256": "f03c68572599a9e7330ce9e797b2756e4264cba832b75184ae211ab2a99feb20"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/InputOutputWorkspace.tsx",
+      "sha256": "550809e0d97724b03be3d5c14f29999aa1e0d6ad2975f450e76beda68f9b2611"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/InteractionConfig.tsx",
+      "sha256": "925b7a1a25e896e19d45f376f277e1c6a310a4cf3e25ae0cca19aa85cf310eb0"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/InteractionPreview.tsx",
+      "sha256": "686120a7f280cdc8ab648a13c8462b8b1b84c6f011b2c94c9e02dae70bfff74f"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/InteractionSetupPreview.tsx",
+      "sha256": "f84fe5765e53600ed3d22d412c67da4b5a659ba872bc72171a708caeb2a3314f"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/McpBindings.tsx",
+      "sha256": "64d6f23f188e1e4143892001a5a42dec24a4fb9ab938074e4689dc4b4a7319cf"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/Records.tsx",
+      "sha256": "f0cbac3fab420abc888ab741e1a4166377d017f7f1ec8b66d4dbcfb1c02291a0"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/ReleaseSummary.tsx",
+      "sha256": "9291f9d03af1a698fc703f3046e9cd439e2a6dce1fbeec76780081f67baac195"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/TeamComposer.tsx",
+      "sha256": "96a02cae20ecb5987419ba85705dbb77b7cda6eed6803ad29c3e0716fbd367a4"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/TeamCreationReview.tsx",
+      "sha256": "3eb2119e81f2ba583bc082908159609d4f0af4cc2eecffa3cceef2519db9b66b"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/Testing.tsx",
+      "sha256": "117eb2fe84049bf1b863c9dfe40797e72bf62378080f1e1ccaa3ebb6abd2ffb6"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/UserInputForm.tsx",
+      "sha256": "1c62f669326e23291f9b566d9ac9034c583cb71dc363cdb1f20264aa7435fe73"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/actions.ts",
+      "sha256": "2d8c8b727978c7fadd37a5409fbeb2e2b5fcd2fc6897aacdb304032387a70908"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/agent-definition.test.ts",
+      "sha256": "1b79f5a41ad2809b39a313ef3fce3ee50b333d06e22f2e647f4227ba9212d867"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/agent-definition.ts",
+      "sha256": "58efc72d8bb168f052d856b85a6ed0ecc73eb43802ff66e347dc3237f735d830"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/agent-workspace.css",
+      "sha256": "147726e68c4cc766978567d7db02d447aef8a5f49dc535ad3907fddf99fb78ac"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/availability.ts",
+      "sha256": "3cd077e49014cae52cc038e21c1f2554bab746c28d57bae33476d6a537dc60a2"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/campus-ui.test.tsx",
+      "sha256": "0bfbcc5e9d93196fd30805a4de0dcbebbac818d0c393684b591ce6cdc01b3f55"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/campus.css",
+      "sha256": "99624d7e1cb601f196fd6ba6417201086a862b493bb463b65921af4fe1f322c5"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/campus.test.ts",
+      "sha256": "76adf81a64bfa939ba9493d86fe9c423641e5abaedff53ef9e1cc1c5c981c5e7"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/capability-fields.css",
+      "sha256": "6e678fa0c12e18394d534c30daf69ace03cb0ce47584d9552942c72735ba0832"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/capability-fields.test.tsx",
+      "sha256": "b0993e002f38a162ffb19b30ee08c6cf943f7f4432f90f39cca5738b130ab86c"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/chat-mvp.css",
+      "sha256": "f62c131965556d0d57c26b267688f02865b422895c1486cbe0a5f993de589102"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/config-summary.ts",
+      "sha256": "9f6cf2b71b92e2f6f3532a7044a5920bdcfa4f51c1b541a60455bd058e8d1367"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/definition-wizard.test.tsx",
+      "sha256": "01ef7576c3447bef78341ca0121189cb6865bb2bd1be3c992803e5f250798458"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/expert-form.css",
+      "sha256": "c7a68f6b8f290cc351f2d3879d867cb2482c366f9ba73ec39052ff459baac25e"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/expert-form.test.tsx",
+      "sha256": "a8325321f80685fd11d814a3e40bd151ec02957bfbcea984670fd2eb59958fcc"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/expert-form.ts",
+      "sha256": "3427af62c109476381eb31689c9dc530a2179023a965f6af4174e8c218354dba"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/expert-resources.ts",
+      "sha256": "f0c04a29f6294e915dfd2d502220d92e3e3eb0d23626c924c42bd312e3569d2e"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/input-output-design.test.tsx",
+      "sha256": "a6489d9ffb54e10f8733016198547ebcc8af31d1db7cfb83a1f07c77eb8e1241"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/interaction-model.ts",
+      "sha256": "29065235814bbda9f9271a480bfdd3200724e7b83b9fc937a9b8b188bf459b5f"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/interaction.css",
+      "sha256": "8802621b1e61e982d88d2b324f104adb94c5ee0728ac5a10b254803c0004586b"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/interaction.test.tsx",
+      "sha256": "0e463a783d226c24e6f9e3ced2211692f906340a10b5121c394a6044a3cc274c"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/management-v11.test.ts",
+      "sha256": "589c555a10f76b79f4a68781acaf4b88c87569d1525a249fc0fd0778c10e8025"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/model.ts",
+      "sha256": "95fa6962f4b84f3f8e7e4cca09252696eeb540c4e28bbf8e049191b6429a8c5d"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/single-agent-scope.test.tsx",
+      "sha256": "15c80c80f3c908d11212aa15f238e59c01d368aa7c1581ddb97f6dd156ef8881"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/skills/campus-assistant/SKILL.md",
+      "sha256": "5881dd019a4c91d04e7b98ede3c654626df902c5913532304f9dce846f54638c"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/skills/campus-captain/SKILL.md",
+      "sha256": "db35b5b4dd0bc208b2f49d51d005a45e544000ac6d14985b849b7a9e8419a548"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/team-creation.css",
+      "sha256": "43cc2f76a9bcebde87fd4b9a9d80bc0b52a69e145e6a0c6d809bd9e29b938961"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/team-creation.test.tsx",
+      "sha256": "cb1476d56ef7f942bce3c44a36db189ac269fc656afa548fdc194182d8ca7bc7"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/team-input-output.test.ts",
+      "sha256": "8cf7076545121f47f28d443d8f0e8e4b210cf854d26b414d5225992450600730"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/testing.test.tsx",
+      "sha256": "a19b3d2df41dcc85601ea00465ce248c18384f281ee239491433dc0b92968bcc"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/ux-review.test.tsx",
+      "sha256": "a13f33799bfefb6db7888e909293db1e48a85c7eb36cd75eb2fdc3f9e36f5780"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/campus/wizard-test-helpers.ts",
+      "sha256": "98990280f23fe969e64bde9a3958eec2a7a4781e94c4c9a641b9bd50c28a0e12"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/capabilities.json",
+      "sha256": "9f02d13a98f1a3d85ca80d9d1a145f15c1b0af6c2f271d42039798a9871a76dd"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/capability-import.test.tsx",
+      "sha256": "af09136685c26e58447795a6e787e6293190b8d147bb01aa611db71e198565ee"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/capability-import.ts",
+      "sha256": "03108893e543565ba303ddf94a8daaa724dc881315a35dfb8127678808680767"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/capability-picker.test.tsx",
+      "sha256": "526ac89b30bb236551358a78f029773ffe065436ad71643ce48dbd436b8129d4"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/capability-search.ts",
+      "sha256": "2b002bc7a3dbda404efd8ef15eb864d68dcf0ac8d676f174f574ea687035697d"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/capability-upload.css",
+      "sha256": "16ee008b50406fe85fdf2222183ae82b75fad00a019131c6d4d10292ffec4b8f"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/chat-mvp.test.tsx",
+      "sha256": "1d0f0439ff6cb19655e8c8953f7434bc9052d1f854dd9cb9b58e1a1c829eb1b3"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/chat-records.ts",
+      "sha256": "1d52d9a3a8337e9cdad3b906563a2036144fc8de1d9b42f10b8d4c26cbe277ad"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/components.tsx",
+      "sha256": "1b11959940915ba7d4fb221a4d9b9495d87633c168d9a2c0ca40969961db4e18"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/config-validation.ts",
+      "sha256": "ddebb17fbe3b03c12f8ad613b01e517e776f54f70c86393837d1186cdd3df197"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/form-contract.ts",
+      "sha256": "0052b052f2bc87a1d70e82d452fec73146b6fa86ae2f28fc175b687ab5f63bd8"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/guided-config.test.ts",
+      "sha256": "99a4c8a36f25ac04fef980dfc4860c67d02c41de15bfc0484c552fc2591f531a"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/guided-config.ts",
+      "sha256": "a129a1cad65a748a704ce89f5bd70a462c5788b30e1a6a581a61ae50049c4555"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/index.html",
+      "sha256": "307d087cc6d4ba214080fd6cc2a66279f77ca963a2d73fb9a767fcedd84a2408"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/main.tsx",
+      "sha256": "536dad70793c9aa23d232b9c67f25e44a4987b19bc08b8e516ad4e85aa88aacb"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/model-access.css",
+      "sha256": "c39ca951165c182603d06cf0e9889c142b8ce5fb65675e6d1246f05bb1184681"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/model-access.test.tsx",
+      "sha256": "a0850845935fe6d1a041f2594ae110bedba21a087ac0e951cf376f4f919bc4c3"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/model-access.ts",
+      "sha256": "a5d5d315119ba57279fa8166bf9e16f95bfdcc5c8f87c340d77080a7c7733641"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/model-center.css",
+      "sha256": "3d19c59d1ac72178b47705a18ebfabeb962df1f02eabcc375d883c08d62320e9"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/model-center.test.tsx",
+      "sha256": "0a86d2a5a28b23aae73cbc1102361b39bd0c7e65449e6d6dc9f15fbdaaa087e6"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/model-center.ts",
+      "sha256": "6b14315dafaeae09674e19f905d6ec8ace7be181056ef94133b20cf2d7084997"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/prototype-store.ts",
+      "sha256": "2427632d3a9668f9880895dd73dd1bd874bb429275de6cb6bcef94544aa9f3f7"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/public/designs/interaction-handoff.html",
+      "sha256": "b6dde842e5e01f33dd55ffa626aba1e427a757422e237bc5da99ce3f48fab9a5"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/run-center.css",
+      "sha256": "60a8c9340387913c3ac9e75b4ff8a78426e8877fb0acf8415fd106f0505e3039"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/run-center.test.tsx",
+      "sha256": "31e3ae90e7252951e72c40e55fba1a978affe19e60435f5ba65aab987a7b6853"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/shared.ts",
+      "sha256": "b46f58491f1c117e3cf3774e956b50eaa83823c5e1ab1caa79ad356ee3902e8f"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/styles.css",
+      "sha256": "ca6f30d6d799c76bfb7d88e0befce0a760804a591278b842def4f78feb31ddc1"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/user-center-model.ts",
+      "sha256": "39485094f936e43f95d73bfe095413f23c5ce4491a4e577ff6d5e17628e9eaaa"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/user-center.css",
+      "sha256": "275a50acad08a81325f7af7a9ace554b78cd142f3cd5b83777d1fec95b6bd664"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/user-center.test.tsx",
+      "sha256": "af8e50e76f2455327d6843771fa984a107d471c0b656b19939c2facbc5622440"
+    },
+    {
+      "source": "admin",
+      "path": "src/admin/user-directory.ts",
+      "sha256": "673004918eacc50d0d504035560d507196e337407af42d9d16c164f88d655f37"
+    },
+    {
+      "source": "admin",
+      "path": "src/shared/employee-contract.ts",
+      "sha256": "5fa06318ff574c5439c8fd3e8e379b8a141b9b980ec1b382c1e8bf3a73ee2169"
+    },
+    {
+      "source": "admin",
+      "path": "src/provider/models.ts",
+      "sha256": "116bd94150c8e2077dd72bf1a67d78f3f3f9335a5870b8e0d072170a091cdd4d"
+    },
+    {
+      "source": "admin",
+      "path": "vite.admin.config.ts",
+      "sha256": "7f943b9d78627ba4d3d09e98d0cdb70299a9e5af029b09032f1f792e00b65b31"
+    },
+    {
+      "source": "admin",
+      "path": "tsconfig.admin.json",
+      "sha256": "327654e28eef18941be326c0d6f343d1610f01282a9c217752b13842141cd084"
+    },
+    {
+      "source": "admin",
+      "path": ".npmrc",
+      "sha256": "ae37c40c64d0a0e8526b5087ee3177db4ff43daeccf7db2a07ac90949ddc5fc9"
+    },
+    {
+      "source": "admin",
+      "path": ".nvmrc",
+      "sha256": "50b8995029fdebc8ca439031c6945518d38ab6ad38a3985c9ba386bfafebcb35"
+    },
+    {
+      "source": "admin",
+      "path": "docs/web-admin-spec.md",
+      "sha256": "201f3db5a308ffe6fb004dd292cb3f4f3255dcb1d5b4e61f335b5bec23e94fe9"
+    },
+    {
+      "source": "admin",
+      "path": "docs/PRD-智能体中心原型重构.md",
+      "sha256": "ed2614bb30ce7a34bd42ef3a57facac5778d0af0966d86383c7cf11de8249608"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-14-agent-center-book-refactor.md",
+      "sha256": "09e78a899badfe387381ebc4b6b8a467c51497c502429edd7ccbecb5a3a3428a"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-14-agent-center-v1.1.md",
+      "sha256": "f25c2367f5b1761462f9f476edc135ac1d74b856b5454849cc96d47c9ebe1fa8"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-14-campus-agent-center.md",
+      "sha256": "4b94da8fdd42cd48b98a9db0d4f9cff513a785cf228f03abb12e04d641c1c68d"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-16-agent-center-ux-review.md",
+      "sha256": "17d863cc4cf284acac0ea71e353fc90b20b92b30dbf8cebb6d76993a885918ba"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-16-agent-creation-readability.md",
+      "sha256": "bd31788fdfcb3ea8a020ce84f4addccac8a56c98935b84d880ca2c93271d9b60"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-16-agent-input-output-design.md",
+      "sha256": "ab62f415505ed03f012eeff0418765a1fdd5a1089f1f7231d06380b2b5c528fa"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-16-single-agent-scope.md",
+      "sha256": "f806b1e2e35aeff56da3864084c75e4a43b9a828fb432c2c0c43411facc2ff35"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-16-team-assembly-boundary.md",
+      "sha256": "3acad2d911ee35b25263b3b5279f3ac08e1631bd8e825769546324b63700f576"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-16-team-creation-ux.md",
+      "sha256": "9859f0ce2446bcc8126e4a930d7f91009a821c3e407827215dc835f4680f8297"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-16-team-input-output-ownership.md",
+      "sha256": "fa61e512c5c1a76ea5a254f237883e4bb6478eaee9086f29bff22ff05adb769a"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-17-c-user-center.md",
+      "sha256": "ee755685f62012b2b6809153dec4f885fd8587e5de022af1c8cbdc24ab55074d"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-17-c-user-oidc-fields.md",
+      "sha256": "4532b2688a91770f03eb3253e1ed872ad88420e1cf7192dea439faa287d491d0"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-17-capability-batch-upload.md",
+      "sha256": "01c885f6c12f7f9ac8015a2544bdcc847255a72c60e550771afa167c47f47975"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-17-chat-mvp.md",
+      "sha256": "2a9e00bc91b9c540e31e08756a3b4f48b231f43813e326d3f0af2aecae3a63c5"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-17-expert-capability-mvp.md",
+      "sha256": "621dc355887af390079def5342ca5b6dfb2a77a267a94d6c50c1318931c5b355"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-17-oidc-user-run-design.md",
+      "sha256": "fd3fe372fc8737f4ac0cd746113330761d2065b6eec83fbe61aa02015f7fce75"
+    },
+    {
+      "source": "admin",
+      "path": "docs/audits/2026-09-17-relay-model-catalog.md",
+      "sha256": "248b2b98498c556897c50839ef8ef4af70a3352fd5e2703132c9bb7fc1f81a80"
+    },
+    {
+      "source": "admin",
+      "path": "docs/research/2026-09-14-agent-field-gap-audit.md",
+      "sha256": "de698f7cc247438df9ea146ab896bf75dba55b11361ba06ec20c9697aca6e308"
+    },
+    {
+      "source": "admin",
+      "path": "docs/research/2026-09-14-web-admin-research.md",
+      "sha256": "4e8cfa046ae194eaa9af5a350710a74d00c2da8a77e7ba478f0fae0ed22e3be7"
+    },
+    {
+      "source": "admin",
+      "path": "src/runtime/skill-packages/agent-reach/SKILL.md",
+      "sha256": "5de62b0396b1a2cf51d8684fef49e959ee1c97f43adb1ba21d2d32fb013988bd"
+    },
+    {
+      "source": "admin",
+      "path": "src/runtime/skill-packages/feishu-document-reading/SKILL.md",
+      "sha256": "310f32662f47fc203f63178de56429e2bc66c6fee5d78e82370e954bcd4a37f1"
+    },
+    {
+      "source": "admin",
+      "path": "src/runtime/skill-packages/feishu-meetings/SKILL.md",
+      "sha256": "2e9d4654becacbe418423a41486edcd350438df2cafce8df423d406bcab7829e"
+    },
+    {
+      "source": "admin",
+      "path": "src/runtime/skill-packages/last30days/SKILL.md",
+      "sha256": "bbcc1faf2659e47c118b12be81c5717191cd066d198995888e898eaffa9b8018"
+    },
+    {
+      "source": "admin",
+      "path": "src/runtime/skill-packages/local-document-operations/SKILL.md",
+      "sha256": "07d657489701faf31bb8880fa79f2b2d73344e0a5b62464a62468d50397f6d26"
+    },
+    {
+      "source": "admin",
+      "path": "src/runtime/skill-packages/managed-research/SKILL.md",
+      "sha256": "5f3394cde24866a255e8ff8f4ca47a9eae90a85fc5ce3fa8f3e4242cc83ef78f"
+    },
+    {
+      "source": "admin",
+      "path": "src/runtime/skill-packages/opencli/SKILL.md",
+      "sha256": "ccb0e5c9eeaca803403f424be9645041c80a2f1c098c8401a0dfba6580ea34a3"
+    },
+    {
+      "source": "admin",
+      "path": "src/runtime/skill-packages/tender-requirements-analysis/SKILL.md",
+      "sha256": "22435ac241eb80e70b32dc47cdc2b30bc0e070e0196e550c0773bc2d23126996"
+    }
+  ]
+}

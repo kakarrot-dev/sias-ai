@@ -1,0 +1,19 @@
+{
+  "name": "sias-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "西亚斯师生服务平台 Web 前台与管理后台原型",
+  "packageManager": "npm@11.19.0",
+  "engines": {
+    "node": ">=26.8.1 <27",
+    "npm": ">=11.19.0 <12"
+  },
+  "scripts": {
+    "setup": "npm ci --prefix frontend && npm ci --prefix admin",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:admin": "npm run dev --prefix admin",
+    "check": "npm run check --prefix frontend && npm run check --prefix admin",
+    "test": "npm test --prefix frontend && npm test --prefix admin",
+    "build": "npm run build --prefix frontend && npm run build --prefix admin"
+  }
+}

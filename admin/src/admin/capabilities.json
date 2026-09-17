@@ -1,0 +1,823 @@
+[
+  {
+    "id": "capability.managed-research.v2",
+    "name": "受管网络调研",
+    "description": "查找 GitHub 项目和订阅资讯，整理成附带来源的调研结果。",
+    "version": 2,
+    "skillVersionIds": [
+      "skill.managed-research.v2"
+    ],
+    "toolVersionIds": [
+      "github.repositories.search@research-source/v1",
+      "rss.read@research-source/v1"
+    ],
+    "mcpVersionIds": [],
+    "permissionRequirements": [
+      "network.research"
+    ],
+    "kind": "skill",
+    "execution": {
+      "provider": "能力中心原型目录",
+      "versions": [
+        "2"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": true,
+      "input": "任务目标与已授权资料",
+      "output": "通过受管 GitHub 与 RSS 数据源生成带来源的调研结果。",
+      "action": "",
+      "toolActions": [
+        {
+          "id": "github.repositories.search@research-source/v1",
+          "name": "搜索 GitHub 仓库",
+          "write": false,
+          "idempotent": true
+        },
+        {
+          "id": "rss.read@research-source/v1",
+          "name": "读取 RSS",
+          "write": false,
+          "idempotent": true
+        }
+      ]
+    },
+    "tags": [
+      "检索",
+      "调研"
+    ],
+    "purposes": [
+      "信息检索",
+      "内容分析"
+    ]
+  },
+  {
+    "id": "capability.text-analysis.v1",
+    "name": "文本分析与结构化表达",
+    "description": "阅读用户提供的文本，提炼重点、归纳问题，整理成清晰的结构化内容。",
+    "version": 1,
+    "skillVersionIds": [],
+    "toolVersionIds": [],
+    "mcpVersionIds": [],
+    "permissionRequirements": [],
+    "kind": "builtin",
+    "execution": {
+      "provider": "能力中心原型目录",
+      "versions": [
+        "1"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": true,
+      "input": "任务目标与已授权资料",
+      "output": "在无外部副作用的边界内分析文本并生成结构化结果。",
+      "action": ""
+    },
+    "tags": [],
+    "parameters": [
+      {
+        "key": "text",
+        "label": "待分析内容",
+        "example": "用户提供的文字材料"
+      }
+    ],
+    "purposes": [
+      "内容分析"
+    ]
+  },
+  {
+    "id": "capability.local-document.v2",
+    "name": "本机文档编写",
+    "description": "查看、创建或修改已授权目录中的文字文档，适合整理材料和撰写报告。",
+    "version": 2,
+    "skillVersionIds": [
+      "skill.local-document-operations.v2"
+    ],
+    "toolVersionIds": [
+      "document.read@local-document/v1",
+      "document.create@local-document/v1",
+      "document.edit@local-document/v1"
+    ],
+    "mcpVersionIds": [
+      "mcp.local-document-runner.v1"
+    ],
+    "permissionRequirements": [
+      "filesystem.read",
+      "filesystem.write"
+    ],
+    "kind": "skill",
+    "execution": {
+      "provider": "能力中心原型目录",
+      "versions": [
+        "2"
+      ],
+      "write": true,
+      "idempotent": false,
+      "active": true,
+      "input": "任务目标与已授权资料",
+      "output": "在任务明确授权的本机目录内查看、独占创建和精确编辑 UTF-8 文档。",
+      "action": "创建或编辑本机文档",
+      "toolActions": [
+        {
+          "id": "document.read@local-document/v1",
+          "name": "读取本机文档",
+          "write": false,
+          "idempotent": true,
+          "input": "已授权目录中的文档路径",
+          "output": "文档正文、路径与内容版本",
+          "required": true,
+          "sourceId": "mcp.local-document-runner.v1",
+          "version": "1"
+        },
+        {
+          "id": "document.create@local-document/v1",
+          "name": "创建本机文档",
+          "write": true,
+          "idempotent": false,
+          "input": "目标目录、文件名与正文",
+          "output": "新文档路径与创建结果",
+          "sourceId": "mcp.local-document-runner.v1",
+          "version": "1"
+        },
+        {
+          "id": "document.edit@local-document/v1",
+          "name": "编辑本机文档",
+          "write": true,
+          "idempotent": false,
+          "input": "文档路径、原内容版本与修改内容",
+          "output": "修改后的内容版本与变更摘要",
+          "sourceId": "mcp.local-document-runner.v1",
+          "version": "1"
+        }
+      ]
+    },
+    "tags": [
+      "文档",
+      "材料"
+    ],
+    "purposes": [
+      "文档处理"
+    ]
+  },
+  {
+    "id": "capability.network-intelligence.v2",
+    "name": "网络情报采集",
+    "description": "搜索公开网络资料、近期动态和社交平台讨论，汇总发现并保留来源。",
+    "version": 2,
+    "skillVersionIds": [
+      "skill.agent-reach.v2",
+      "skill.last30days.v2",
+      "skill.opencli.v2"
+    ],
+    "toolVersionIds": [
+      "agent-reach.search@network-intelligence/v1",
+      "last30days.research@network-intelligence/v1",
+      "opencli.social-search@network-intelligence/v1"
+    ],
+    "mcpVersionIds": [
+      "mcp.external-intelligence-runner.v1"
+    ],
+    "permissionRequirements": [
+      "network.research"
+    ],
+    "kind": "skill",
+    "execution": {
+      "provider": "能力中心原型目录",
+      "versions": [
+        "2"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": true,
+      "input": "任务目标与已授权资料",
+      "output": "使用 Agent-Reach、Last 30 Days 与 OpenCLI 搜集近期公开网络情报并保留来源与失败通道。",
+      "action": "",
+      "toolActions": [
+        {
+          "id": "agent-reach.search@network-intelligence/v1",
+          "name": "搜索网络资料",
+          "write": false,
+          "idempotent": true
+        },
+        {
+          "id": "last30days.research@network-intelligence/v1",
+          "name": "调研近期动态",
+          "write": false,
+          "idempotent": true
+        },
+        {
+          "id": "opencli.social-search@network-intelligence/v1",
+          "name": "搜索社交平台",
+          "write": false,
+          "idempotent": true
+        }
+      ]
+    },
+    "tags": [
+      "检索",
+      "调研"
+    ],
+    "purposes": [
+      "信息检索",
+      "内容分析"
+    ]
+  },
+  {
+    "id": "capability.tender-analysis.v2",
+    "name": "招投标文件分析",
+    "description": "阅读招投标文件，提取客户要求、核对材料，并标明原文位置。",
+    "version": 2,
+    "skillVersionIds": [
+      "skill.tender-requirements-analysis.v2"
+    ],
+    "toolVersionIds": [
+      "tender.requirements.extract@document-analysis/v1"
+    ],
+    "mcpVersionIds": [
+      "mcp.tender-document-runner.v1"
+    ],
+    "permissionRequirements": [
+      "filesystem.read"
+    ],
+    "kind": "skill",
+    "execution": {
+      "provider": "能力中心原型目录",
+      "versions": [
+        "2"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": true,
+      "input": "任务目标与已授权资料",
+      "output": "只读解析 Word、PowerPoint、Excel、PDF 与图片客户材料，形成带原始定位的需求矩阵和下游写作交接。",
+      "action": "",
+      "toolActions": [
+        {
+          "id": "tender.requirements.extract@document-analysis/v1",
+          "name": "提取招投标材料要求",
+          "write": false,
+          "idempotent": true
+        }
+      ]
+    },
+    "tags": [
+      "文档",
+      "材料"
+    ],
+    "purposes": [
+      "文档处理",
+      "内容分析"
+    ]
+  },
+  {
+    "id": "capability.feishu-documents.v2",
+    "name": "飞书文档读取",
+    "description": "搜索并阅读使用者有权访问的飞书文档，供专家查找资料和回答问题。只读，不修改文档。",
+    "version": 2,
+    "skillVersionIds": [
+      "skill.feishu-document-reading.v2"
+    ],
+    "toolVersionIds": [
+      "feishu.documents.search@feishu-documents/v1",
+      "feishu.documents.read@feishu-documents/v1",
+      "feishu.wiki.count@feishu-wiki/v1"
+    ],
+    "mcpVersionIds": [
+      "mcp.feishu-documents.v1",
+      "mcp.feishu-wiki.v1"
+    ],
+    "permissionRequirements": [
+      "feishu.documents.search",
+      "feishu.documents.read",
+      "feishu.wiki.read"
+    ],
+    "kind": "skill",
+    "execution": {
+      "provider": "能力中心原型目录",
+      "versions": [
+        "2"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": true,
+      "input": "任务目标与已授权资料",
+      "output": "以当前连接用户身份搜索并只读获取其有权访问的飞书新版文档。",
+      "action": "",
+      "toolActions": [
+        {
+          "id": "feishu.documents.search@feishu-documents/v1",
+          "name": "搜索飞书文档",
+          "write": false,
+          "idempotent": true
+        },
+        {
+          "id": "feishu.documents.read@feishu-documents/v1",
+          "name": "读取飞书文档",
+          "write": false,
+          "idempotent": true
+        },
+        {
+          "id": "feishu.wiki.count@feishu-wiki/v1",
+          "name": "查询知识库信息",
+          "write": false,
+          "idempotent": true
+        }
+      ]
+    },
+    "tags": [
+      "文档",
+      "材料"
+    ],
+    "purposes": [
+      "信息检索",
+      "文档处理"
+    ]
+  },
+  {
+    "id": "capability.feishu-meetings.v2",
+    "name": "飞书会议办理",
+    "description": "查找联系人、创建飞书会议，并在确认后发送邀请。",
+    "version": 2,
+    "skillVersionIds": [
+      "skill.feishu-meetings.v2"
+    ],
+    "toolVersionIds": [
+      "feishu.contacts.search@feishu-meetings/v1",
+      "feishu.meetings.create@feishu-meetings/v1",
+      "feishu.meetings.send_invitation@feishu-meetings/v1"
+    ],
+    "mcpVersionIds": [
+      "mcp.feishu-meetings.v1"
+    ],
+    "permissionRequirements": [
+      "feishu.contacts.search",
+      "feishu.meetings.create",
+      "feishu.meetings.send"
+    ],
+    "kind": "skill",
+    "execution": {
+      "provider": "能力中心原型目录",
+      "versions": [
+        "2"
+      ],
+      "write": true,
+      "idempotent": false,
+      "active": true,
+      "input": "任务目标与已授权资料",
+      "output": "搜索组织内联系人、确认创建会议号并以连接用户身份发送邀请。",
+      "action": "创建会议并发送邀请",
+      "toolActions": [
+        {
+          "id": "feishu.contacts.search@feishu-meetings/v1",
+          "name": "搜索联系人",
+          "write": false,
+          "idempotent": true
+        },
+        {
+          "id": "feishu.meetings.create@feishu-meetings/v1",
+          "name": "创建会议",
+          "write": true,
+          "idempotent": false
+        },
+        {
+          "id": "feishu.meetings.send_invitation@feishu-meetings/v1",
+          "name": "发送会议邀请",
+          "write": true,
+          "idempotent": false
+        }
+      ]
+    },
+    "tags": [
+      "会议",
+      "日程",
+      "邀请"
+    ],
+    "purposes": [
+      "会议日程",
+      "消息通知"
+    ]
+  },
+  {
+    "id": "calendar",
+    "name": "校内日程",
+    "description": "查看校内日程，安排会议并在确认后发送参会邀请。",
+    "version": "2.1",
+    "kind": "builtin",
+    "skillVersionIds": [],
+    "toolVersionIds": [
+      "calendar@2.1"
+    ],
+    "mcpVersionIds": [],
+    "permissionRequirements": [
+      "user.authorized-scope"
+    ],
+    "execution": {
+      "provider": "统一办公平台",
+      "versions": [
+        "2.1",
+        "2.0"
+      ],
+      "write": true,
+      "idempotent": true,
+      "active": true,
+      "input": "起止时间、参会人、会议主题",
+      "output": "日程列表 / 邀请回执",
+      "action": "发送会议邀请"
+    },
+    "tags": [
+      "会议",
+      "日程",
+      "邀请"
+    ],
+    "parameters": [
+      {
+        "key": "title",
+        "label": "日程主题",
+        "example": "部门工作协调会"
+      },
+      {
+        "key": "time",
+        "label": "时间",
+        "example": "明天 10:00"
+      },
+      {
+        "key": "attendees",
+        "label": "参与人员",
+        "example": "林晓、陈明"
+      }
+    ],
+    "purposes": [
+      "会议日程"
+    ]
+  },
+  {
+    "id": "notice",
+    "name": "通知下发",
+    "description": "把整理好的通知或会议摘要发送给指定人员，发送前需要人工确认。",
+    "version": "1.2",
+    "kind": "builtin",
+    "skillVersionIds": [],
+    "toolVersionIds": [
+      "notice@1.2"
+    ],
+    "mcpVersionIds": [],
+    "permissionRequirements": [
+      "user.authorized-scope"
+    ],
+    "execution": {
+      "provider": "校园消息中心",
+      "versions": [
+        "1.2",
+        "1.1"
+      ],
+      "write": true,
+      "idempotent": false,
+      "active": true,
+      "input": "正文、接收范围、内容版本",
+      "output": "发送状态与消息标识",
+      "action": "下发会议摘要",
+      "departments": [
+        "信息化处",
+        "校办公室"
+      ]
+    },
+    "tags": [],
+    "parameters": [
+      {
+        "key": "recipients",
+        "label": "接收人",
+        "example": "示例部门成员"
+      },
+      {
+        "key": "subject",
+        "label": "通知标题",
+        "example": "会议提醒"
+      },
+      {
+        "key": "content",
+        "label": "通知内容",
+        "example": "请准时参加部门工作协调会。"
+      }
+    ],
+    "purposes": [
+      "消息通知"
+    ]
+  },
+  {
+    "id": "directory",
+    "name": "组织与人员查询",
+    "description": "查找部门与联系人，了解组织关系；只查询，不修改信息。",
+    "version": "1.0",
+    "kind": "builtin",
+    "skillVersionIds": [],
+    "toolVersionIds": [
+      "directory@1.0"
+    ],
+    "mcpVersionIds": [],
+    "permissionRequirements": [
+      "user.authorized-scope"
+    ],
+    "execution": {
+      "provider": "统一身份平台",
+      "versions": [
+        "1.0"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": true,
+      "input": "人员 / 部门标识",
+      "output": "只读组织信息",
+      "action": ""
+    },
+    "tags": [],
+    "parameters": [
+      {
+        "key": "query",
+        "label": "查询内容",
+        "example": "信息化处"
+      }
+    ],
+    "purposes": [
+      "信息检索"
+    ]
+  },
+  {
+    "id": "archive",
+    "name": "历史会议检索",
+    "description": "按会议查找历史归档材料，便于查阅以往结论和记录。",
+    "version": "1.0",
+    "kind": "builtin",
+    "skillVersionIds": [],
+    "toolVersionIds": [
+      "archive@1.0"
+    ],
+    "mcpVersionIds": [],
+    "permissionRequirements": [
+      "user.authorized-scope"
+    ],
+    "execution": {
+      "provider": "档案平台",
+      "versions": [
+        "1.0"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": false,
+      "input": "会议标识",
+      "output": "归档文档索引",
+      "action": ""
+    },
+    "tags": [],
+    "parameters": [
+      {
+        "key": "query",
+        "label": "检索关键词",
+        "example": "教学工作会议"
+      }
+    ],
+    "purposes": [
+      "信息检索",
+      "文档处理"
+    ]
+  },
+  {
+    "id": "capability.mcp.local-document.v1",
+    "name": "校内文档 MCP 服务",
+    "description": "连接校内文档系统，按需要查看、新建或修改获准的文字文档。",
+    "version": "1",
+    "skillVersionIds": [],
+    "toolVersionIds": [
+      "document.read@local-document/v1",
+      "document.create@local-document/v1",
+      "document.edit@local-document/v1"
+    ],
+    "mcpVersionIds": [
+      "mcp.local-document-runner.v1"
+    ],
+    "permissionRequirements": [
+      "filesystem.read",
+      "filesystem.write"
+    ],
+    "tags": [
+      "MCP",
+      "文档",
+      "读取",
+      "创建",
+      "编辑"
+    ],
+    "execution": {
+      "provider": "校内文档服务（本地样例）",
+      "versions": [
+        "1"
+      ],
+      "write": true,
+      "idempotent": false,
+      "active": true,
+      "input": "已授权文档路径与内容",
+      "output": "文档内容或变更结果",
+      "action": "创建或编辑文档",
+      "mcpService": {
+        "id": "mcp.local-document-runner.v1",
+        "connection": "available"
+      },
+      "toolActions": [
+        {
+          "id": "document.read@local-document/v1",
+          "name": "读取本机文档",
+          "write": false,
+          "idempotent": true,
+          "input": "已授权目录中的文档路径",
+          "output": "文档正文、路径与内容版本",
+          "sourceId": "mcp.local-document-runner.v1",
+          "version": "1"
+        },
+        {
+          "id": "document.create@local-document/v1",
+          "name": "创建本机文档",
+          "write": true,
+          "idempotent": false,
+          "input": "目标目录、文件名与正文",
+          "output": "新文档路径与创建结果",
+          "sourceId": "mcp.local-document-runner.v1",
+          "version": "1"
+        },
+        {
+          "id": "document.edit@local-document/v1",
+          "name": "编辑本机文档",
+          "write": true,
+          "idempotent": false,
+          "input": "文档路径、原内容版本与修改内容",
+          "output": "修改后的内容版本与变更摘要",
+          "sourceId": "mcp.local-document-runner.v1",
+          "version": "1"
+        }
+      ]
+    },
+    "purposes": [
+      "文档处理"
+    ]
+  },
+  {
+    "id": "capability.mcp.archive.v1",
+    "name": "档案查询 MCP 服务",
+    "description": "按标题或时间查找档案和引用地址。此演示服务已停用，暂时不能添加。",
+    "version": "1",
+    "skillVersionIds": [],
+    "toolVersionIds": [
+      "archive.search@campus-archive/v1"
+    ],
+    "mcpVersionIds": [
+      "mcp.campus-archive.v1"
+    ],
+    "permissionRequirements": [
+      "user.authorized-scope"
+    ],
+    "tags": [
+      "MCP",
+      "档案",
+      "停用"
+    ],
+    "execution": {
+      "provider": "校内档案服务（本地样例）",
+      "versions": [
+        "1"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": false,
+      "input": "档案标题或时间范围",
+      "output": "获准档案索引",
+      "action": "",
+      "mcpService": {
+        "id": "mcp.campus-archive.v1",
+        "connection": "unavailable"
+      },
+      "toolActions": [
+        {
+          "id": "archive.search@campus-archive/v1",
+          "name": "查询档案索引",
+          "write": false,
+          "idempotent": true,
+          "input": "档案标题或时间范围",
+          "output": "获准档案索引与引用地址",
+          "sourceId": "mcp.campus-archive.v1",
+          "version": "1"
+        }
+      ]
+    },
+    "purposes": [
+      "信息检索",
+      "文档处理"
+    ]
+  },
+  {
+    "id": "capability.campus-captain.v1",
+    "name": "专家团协作",
+    "description": "分派固定成员、收集本任务结果并汇总交付。",
+    "version": 1,
+    "kind": "skill",
+    "skillVersionIds": [
+      "skill.campus-captain.v1"
+    ],
+    "toolVersionIds": [
+      "campus.captain.dispatch@v1",
+      "campus.captain.results@v1",
+      "campus.captain.aggregate@v1"
+    ],
+    "mcpVersionIds": [],
+    "permissionRequirements": [],
+    "tags": [
+      "平台内置",
+      "协作"
+    ],
+    "execution": {
+      "provider": "平台内置（模拟）",
+      "versions": [
+        "1"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": true,
+      "input": "当前任务与授权对象",
+      "output": "分派固定成员、收集本任务结果并汇总交付。",
+      "action": "",
+      "toolActions": [
+        {
+          "id": "campus.captain.dispatch@v1",
+          "name": "分派固定成员",
+          "write": false,
+          "idempotent": true,
+          "required": true
+        },
+        {
+          "id": "campus.captain.results@v1",
+          "name": "获取成员状态与结果",
+          "write": false,
+          "idempotent": true,
+          "required": true
+        },
+        {
+          "id": "campus.captain.aggregate@v1",
+          "name": "汇总本任务结果",
+          "write": false,
+          "idempotent": true,
+          "required": true
+        }
+      ]
+    },
+    "purposes": [
+      "协作调度"
+    ]
+  },
+  {
+    "id": "capability.campus-assistant.v1",
+    "name": "统一助理接待",
+    "description": "日常问答、意图识别与授权范围内的承接匹配。",
+    "version": 1,
+    "kind": "skill",
+    "skillVersionIds": [
+      "skill.campus-assistant.v1"
+    ],
+    "toolVersionIds": [
+      "campus.assistant.match@v1",
+      "campus.assistant.handoff@v1"
+    ],
+    "mcpVersionIds": [],
+    "permissionRequirements": [],
+    "tags": [
+      "平台内置",
+      "接待"
+    ],
+    "execution": {
+      "provider": "平台内置（模拟）",
+      "versions": [
+        "1"
+      ],
+      "write": false,
+      "idempotent": true,
+      "active": true,
+      "input": "当前任务与授权对象",
+      "output": "日常问答、意图识别与授权范围内的承接匹配。",
+      "action": "",
+      "toolActions": [
+        {
+          "id": "campus.assistant.match@v1",
+          "name": "匹配有权使用的专家与专家团",
+          "write": false,
+          "idempotent": true,
+          "required": true
+        },
+        {
+          "id": "campus.assistant.handoff@v1",
+          "name": "转交已选承接对象",
+          "write": false,
+          "idempotent": true,
+          "required": true
+        }
+      ]
+    },
+    "purposes": [
+      "协作调度"
+    ]
+  }
+]

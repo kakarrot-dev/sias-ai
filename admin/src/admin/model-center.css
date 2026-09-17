@@ -1,0 +1,10 @@
+.model-center .notice { margin-bottom: 20px; }
+.model-row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.model-center .facts dd { overflow-wrap: anywhere; }
+.model-table td:first-child { min-width: 180px; overflow-wrap: anywhere; }
+.model-table td:last-child { min-width: 140px; }
+.model-table small { display: block; margin-top: 5px; color: var(--text-secondary, #697067); }
+.model-capability-options { border: 1px solid #e3e7dd; border-radius: 8px; margin: 20px 0; padding: 16px; display: grid; gap: 14px; }
+.model-capability-options label { display: flex; gap: 10px; align-items: center; }
+.expert-model-source { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 800px) { .model-center .section-heading { align-items: flex-start; gap: 16px; flex-wrap: wrap; } }

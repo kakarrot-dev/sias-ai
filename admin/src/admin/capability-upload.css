@@ -1,0 +1,18 @@
+.capability-upload .modal { max-width: 1040px; }
+.capability-upload.has-results .modal { display: flex; flex-direction: column; max-height: 90dvh; }
+.capability-upload.has-results .modal>header, .capability-upload.has-results .modal>p, .capability-upload.has-results .modal>footer, .capability-upload.has-results .capability-upload-drop, .capability-upload.has-results .capability-upload-help, .capability-upload.has-results .capability-upload-summary { flex-shrink: 0; }
+.capability-upload.has-results .capability-upload-drop { flex-direction: row; justify-content: space-between; padding: 10px 14px; text-align: left; }
+.capability-upload.has-results .capability-upload-drop strong { display: none; }
+.capability-upload.has-results .capability-upload-preview { min-height: 100px; }
+.capability-upload-drop { border: 1px dashed var(--accent); border-radius: 8px; background: #f7f9f3; padding: 26px 18px; display: flex; align-items: center; gap: 12px; flex-direction: column; text-align: center; }
+.capability-upload-drop input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.capability-upload-drop span, .capability-upload-help, .capability-upload footer>span { font-size: 12px; color: var(--muted); line-height: 1.7; }
+.capability-upload-help, .capability-upload-summary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.capability-upload-summary { font-size: 12px; }
+.capability-upload-preview { max-height: 330px; overflow: auto; }
+.capability-upload-preview .data-table td { padding: 14px 12px; }
+.capability-upload-preview .data-table small, .capability-upload-preview .data-table p { white-space: normal; overflow-wrap: anywhere; max-width: 300px; }
+.capability-upload footer>span { margin-right: auto; }
+.capability-imported-detail pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #f7f9f3; padding: 12px; border-radius: 6px; max-height: 280px; overflow: auto; font-size: 12px; }
+.capability-imported-detail summary { cursor: pointer; padding: 8px 0; overflow-wrap: anywhere; }
+.capability-imported-detail>p { overflow-wrap: anywhere; }

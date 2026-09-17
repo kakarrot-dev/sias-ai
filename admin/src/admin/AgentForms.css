@@ -1,0 +1,72 @@
+.contract-fields { margin: 22px 0; min-width: 0; }
+.contract-fields .section-heading { gap: 14px; margin-bottom: 12px; }
+.contract-fields .section-heading h3 { font-size: 13px; margin: 0 0 6px; }
+.contract-fields .section-heading h3 span { font-size: 11px; margin-left: 6px; font-weight: 400; }
+.form-starter { padding: 15px; background: #f7f8f4; border: 1px dashed #d7dece; border-radius: 7px; }
+.form-starter p { font-size: 12px; color: var(--muted); margin: 0 0 12px; }
+.form-starter select { width: auto; min-width: 140px; }
+.form-definition-list { display: grid; gap: 10px; }
+.form-definition { border: 1px solid var(--line); border-radius: 7px; padding: 13px; background: #fff; min-width: 0; }
+.form-definition-head { display: flex; align-items: center; gap: 4px; margin-bottom: 13px; }
+.form-definition-head strong { margin: 0 7px; font-size: 12px; overflow-wrap: anywhere; flex: 1; }
+.form-index { border-radius: 4px; background: #f0f3eb; color: #657951; padding: 3px 6px; font-size: 10px; }
+.form-required { display: flex; align-items: center; gap: 4px; font-size: 11px; white-space: nowrap; }
+.form-definition-main { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 10px; }
+.form-definition label:not(.form-required), .form-field-details label { display: grid; gap: 6px; font-size: 11px; color: #727e68; }
+.form-definition input, .form-definition select, .form-definition textarea { min-width: 0; width: 100%; font-size: 12px; }
+.form-definition input[type=checkbox] { width: 13px; }
+.form-field-details { margin-top: 12px; }
+.form-field-details summary { font-size: 11px; color: #6d7e5f; cursor: pointer; }
+.form-field-details[open] summary { margin-bottom: 10px; }
+.form-options-editor { margin-top: 12px; }
+.form-options-editor small { font-size: 10px; }
+.form-range { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+.rendered-form { display: grid; gap: 17px; margin: 14px 0; min-width: 0; }
+.rendered-field { min-width: 0; }
+.rendered-field > label { display: block; font-size: 12px; color: #46523e; font-weight: 550; margin-bottom: 8px; }
+.rendered-field em { color: #a65b42; font-style: normal; margin-left: 4px; }
+.rendered-field > input, .rendered-field > select, .rendered-field > textarea { width: 100%; min-width: 0; }
+.rendered-field > small { display: block; font-size: 11px; margin-top: 5px; }
+.rendered-field [aria-invalid=true] { border-color: #b2634b; }
+.form-value-error { color: #a04d3b; }
+.form-multiselect { display: flex; flex-wrap: wrap; gap: 12px; padding: 10px; border: 1px solid var(--line); border-radius: 5px; }
+.form-multiselect label { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.form-readonly-value { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.7; font-size: 13px; }
+.rendered-field.is-readonly { border-bottom: 1px solid #edf0e8; padding-bottom: 12px; }
+.form-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.agent-form-preview .preview-columns { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 22px; }
+.agent-form-preview .preview-entry { padding-right: 22px; border-right: 1px solid var(--line); min-width: 0; }
+.preview-entry h3, .preview-interaction h3 { font-size: 14px; margin-bottom: 8px; }
+.preview-entry .row-actions, .preview-interaction .row-actions { flex-wrap: wrap; }
+.preview-entry .field { margin-bottom: 14px; }
+.preview-interaction { min-width: 0; }
+.preview-interaction .simulation-status { margin-bottom: 18px; }
+.preview-interaction .sample-deliverable { margin: 16px 0; padding: 16px; }
+.preview-interaction .sample-deliverable h3 { margin-top: 0; }
+.preview-interaction .sample-deliverable pre { max-height: 380px; overflow: auto; }
+.preview-status-strip { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); font-size: 11px; color: var(--muted); }
+.preview-status-strip span { padding: 5px 9px; border-radius: 4px; background: #f5f6f2; }
+.preview-status-strip span.is-active { background: #e8eedf; color: #486136; font-weight: 600; }
+.preview-events { margin-top: 20px; font-size: 11px; color: var(--muted); }
+.preview-events li { margin: 6px 0; line-height: 1.6; }
+.preview-inputs-summary { font-size: 12px; }
+.creation-preview { margin-top: 25px; }
+.creation-preview > summary { cursor: pointer; padding: 16px; border: 1px solid var(--line); background: white; border-radius: 7px; font-size: 13px; }
+.creation-preview[open] > summary { margin-bottom: 14px; }
+@media (max-width: 1150px) {
+  .agent-form-preview .preview-columns { grid-template-columns: 1fr; }
+  .agent-form-preview .preview-entry { border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 22px; }
+}
+@media (max-width: 760px) { .form-definition-main { grid-template-columns: 1fr; } .form-definition-head .icon-button { width: 26px; } .contract-fields .section-heading { flex-wrap: wrap; } }
+.form-definition input:not([type=checkbox]), .form-definition select, .form-definition textarea,
+.rendered-field > input, .rendered-field > select, .rendered-field > textarea,
+.form-starter select {
+  border: 1px solid #dce2d5; border-radius: 5px; background: #fff; color: #35422d;
+  padding: 9px 10px; font: inherit; font-size: 12px; line-height: 1.5; min-height: 36px;
+}
+.form-definition input:focus, .form-definition select:focus, .form-definition textarea:focus,
+.rendered-field > input:focus, .rendered-field > select:focus, .rendered-field > textarea:focus {
+  outline: 2px solid #dae5ce; outline-offset: 1px; border-color: #8fa478;
+}
+.form-definition input[type=checkbox], .form-multiselect input { accent-color: var(--accent); }
+.agent-creation .creation-format-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
