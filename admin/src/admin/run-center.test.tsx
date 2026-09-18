@@ -69,7 +69,7 @@ describe('chat Run Center', () => {
   it('has conversation, invocation, usage and audit views while preserving stored business history', async () => {
     const before = clone(prototypeStore().state())
     await open()
-    expect(screen.getAllByRole('tab').map(tab => tab.textContent)).toEqual(['会话记录', '模型调用', '用量统计', '管理审计'])
+    expect(screen.getAllByRole('tab').map(tab => tab.textContent)).toEqual(['会话记录', '模型调用', '服务结果与人民币用量', '用量统计', '管理审计'])
     expect(screen.queryByText(/业务办理记录|人工确认|演示确认后继续|协作进度/)).not.toBeInTheDocument()
     const rows = within(screen.getByRole('table')).getAllByRole('row')
     expect(rows).toHaveLength(7); expect(rows[1]).toHaveTextContent('chat-0917-001')

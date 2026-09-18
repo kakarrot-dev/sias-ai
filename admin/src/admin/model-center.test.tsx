@@ -43,6 +43,10 @@ it('parses IDs without guessing model capabilities', () => {
 it('renames saved demo entries without rewriting Agent history or dropping model references', () => {
   const saved = clone(state()); const model = saved.modelCenter!.models[0]
   model.modelId = 'campus-text'; model.displayName = '校内通用语言模型'
+  // Simulate an old snapshot consistently, including the newly added catalog examples.
+  for (const agent of saved.agents) for (const config of [agent.draft, ...agent.versions.map(v => v.config)]) {
+    if (config.model === 'deepseek-v4') config.model = 'campus-text'
+  }
   const history = clone(saved.agents); const before = modelReferences(saved, model).map(a => a.id)
   upgradeCampus(saved)
   expect(model).toMatchObject({ modelId: 'deepseek-v4', displayName: 'deepseek-v4' })

@@ -1,3 +1,6 @@
+import { campusAgentCategories } from '../../../../frontend/prototypes/macos-client-v2/src/campus-agent-catalog'
+import type { PublicExpertPreview } from '../../../../frontend/src/shared/service-prototype'
+import { PrivateExpertOverview } from '../ServiceOutcomes'
 import { agentModelName } from '../model-center'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Plus } from 'iconoir-react'
@@ -34,10 +37,10 @@ function ChatExpertCatalog({ state, actor, navigate }: Props) {
     <div className="catalog-panel"><div className="table-toolbar"><SearchField label="搜索专家" placeholder="搜索专家名称或简介" value={query} onChange={v => { setQuery(v); setPage(0) }} /><div className="filters"><select aria-label="筛选状态" value={status} onChange={e => { setStatus(e.target.value); setPage(0) }}><option value="all">全部状态</option><option value="published">已发布</option><option value="draft">未发布</option><option value="disabled">已停用</option></select></div></div>
     {rows.length ? <div className="table-scroll"><table className="data-table chat-expert-table"><thead><tr><th>专家名称 / 简介</th><th>模型</th><th>发布状态</th><th>最近更新</th><th>操作</th></tr></thead><tbody>{rows.slice(currentPage * 8, currentPage * 8 + 8).map(a => <tr key={a.id}><td><button className="entity-name" onClick={() => navigate(`/agents/${a.id}/view`)}>{a.draft.name}</button><small>{a.draft.description || '待填写简介'}</small></td><td>{agentModelName(state, a.draft)}</td><td><Tag>{statusOf(a)}</Tag><small>{a.live ? `当前 v${a.live}${a.disabled ? ' · 用户不可使用' : ' · 登录后可用'}` : '仅后台可见'}</small></td><td>{formatTime(a.updated)}</td><td><Button variant="ghost" onClick={() => navigate(`/agents/${a.id}/edit/basic`)}>{actor.role === 'admin' ? '配置' : '查看'}</Button><Button variant="ghost" onClick={() => navigate(`/agents/${a.id}/view/records`)}>会话记录</Button></td></tr>)}</tbody></table></div> : <Empty title="没有匹配的专家" description="调整搜索条件，或创建第一个聊天专家。" />}
     <div className="table-footer"><span>共 {rows.length} 位专家</span><div><Button disabled={!currentPage} onClick={() => setPage(currentPage - 1)}>上一页</Button><span>{currentPage + 1} / {Math.max(1, Math.ceil(rows.length / 8))}</span><Button disabled={(currentPage + 1) * 8 >= rows.length} onClick={() => setPage(currentPage + 1)}>下一页</Button></div></div></div>
-    <p className="record-note">草稿仅供管理员编辑。发布并启用后，所有正常登录用户均可使用。</p></>
+    <p className="record-note">草稿仅供管理员编辑。发布并启用后，所有正常登录用户均可使用。人群与用途仅用于目录发现，不作为权限。</p><PrivateExpertOverview /></>
 }
 function ChatExpertEditor({ agent, state, actor, route, navigate, commit, busy, onDirty }: Props & { agent?: Agent }) {
-  const initial = useRef<Config>(expertMvpConfig(agent ? agent.draft : { ...blankConfig(), model: '', prompt: '', interaction: defaultInteractionConfig(), expert: { ...profileDefaults(), formVersion: 'compact' } }))
+  const initial = useRef<Config>(expertMvpConfig(agent ? agent.draft : { ...blankConfig(), model: '', prompt: '', discovery: { audience: 'staff', category: 'campus-office' }, interaction: defaultInteractionConfig(), expert: { ...profileDefaults(), formVersion: 'compact' } }))
   const cacheKey = `chat-expert-draft:${agent?.id ?? 'new'}:${actor.role}`
   const [c, setConfig] = useState<Config>(() => {
     try { const cached = JSON.parse(sessionStorage.getItem(cacheKey) ?? 'null'); if (cached?.base === configDigest(initial.current) || agent && cached?.base === configDigest(agent.draft)) return expertMvpConfig(cached.config) } catch { /* Read the saved draft when a browser cache is unavailable. */ }
@@ -69,6 +72,12 @@ function ChatExpertEditor({ agent, state, actor, route, navigate, commit, busy, 
     return () => onDirty(false)
   }, [dirty, save, cacheKey, c, onDirty])
   const issues = expertMvpIssues(state, agent?.id ?? '', c, true)
+  const preview = () => {
+    if (!agent?.live) return
+    const config = agent.versions.find(v => v.number === agent.live)!.config
+    const data: PublicExpertPreview = { id: agent.id, name: config.name, description: config.description, model: config.model, version: agent.live, disabled: agent.disabled, audience: config.discovery?.audience ?? 'staff', category: config.discovery?.category ?? 'campus-office', inputs: config.input.types, fileMB: config.input.fileMB, count: config.input.count, totalMB: config.input.totalMB, outputs: config.output.types, notice: config.tools.some(t => t.id === 'notice' && t.write && t.enabled !== false) }
+    window.open(`http://127.0.0.1:5190/#expert=${encodeURIComponent(JSON.stringify(data))}`, 'sias-frontend-preview')
+  }
   const open = (mode: string, version?: number) => { setModal(mode); setSelected(version); setNote('') }
   const perform = async () => {
     if (!agent) return
@@ -77,7 +86,7 @@ function ChatExpertEditor({ agent, state, actor, route, navigate, commit, busy, 
   }
   return <div className="chat-expert-editor">
     <PageHeader title={agent ? agent.draft.name : '创建专家智能体'} description={agent ? '管理专家配置与发布状态。已发布内容在下一次发布前保持不变。' : '填写资料、配置模型与执行能力，选择输入输出格式。'}>
-      <Button disabled={busy} onClick={() => navigate('/agents')}>取消</Button>
+      <Button disabled={busy} onClick={() => navigate('/agents')}>取消</Button>{agent?.live && <Button onClick={preview}>预览已发布版本</Button>}
       {editable && section === 'basic' && <><Button disabled={busy || !!agent && !dirty} onClick={() => void save()}>{busy ? '保存中…' : '保存草稿'}</Button><Button variant="primary" disabled={busy || !!issues.length || dirty || !agent || !!agent.disabled || !hasChanges(agent)} title={!agent || dirty ? '请先保存草稿' : issues.length ? issues.join('；') : undefined} onClick={() => open('publish')}>发布专家</Button></>}
     </PageHeader>
     <div className="expert-editor-status">{agent && <Tag>{statusOf(agent)}{agent.live ? ` · v${agent.live}` : ''}</Tag>}{section === 'basic' && <span>{dirty ? '有未保存修改' : !agent ? '保存草稿后即可发布' : '草稿已保存'}</span>}
@@ -88,6 +97,7 @@ function ChatExpertEditor({ agent, state, actor, route, navigate, commit, busy, 
     {agent && <nav className="editor-tabs" aria-label="专家管理"><Button onClick={() => navigate(`/agents/${agent.id}/edit/basic`)} aria-current={section === 'basic' ? 'page' : undefined}>专家配置</Button><Button onClick={() => navigate(`/agents/${agent.id}/view/history`)} aria-current={section === 'history' ? 'page' : undefined}>发布记录</Button><Button onClick={() => navigate(`/agents/${agent.id}/view/records`)} aria-current={section === 'records' ? 'page' : undefined}>会话与用量</Button></nav>}
     {section === 'basic' && <><nav className="expert-config-sections" aria-label="专家配置分区">{[["basic", "基础与提示词"], ["model", "模型配置"], ["capabilities", "执行能力"], ["io", "输入输出"]].map(([id, label]) => <Button key={id} aria-current={configSection === id ? 'page' : undefined} onClick={() => setConfigSection(id)}>{label}</Button>)}</nav><div className="chat-config-content"><fieldset className="campus-fieldset" disabled={!editable || busy}>
       {configSection === 'basic' && <><Section title="专家资料" description="用户在专家列表和聊天页面看到的内容。"><div className="form-grid"><Field label="专家名称" required><input aria-label="专家名称" value={c.name} maxLength={20} placeholder="例如：学习规划专家" onChange={e => set({ name: e.target.value })} /></Field><ExpertModelSelect config={c} patch={set} disabled={!editable || busy} state={state} /></div><Field label="专家简介" required hint="说明可以咨询什么，最多 200 字。"><textarea aria-label="专家简介" value={c.description} maxLength={200} rows={3} onChange={e => set({ description: e.target.value })} /></Field></Section>
+      <Section title="目录发现" description="随专家版本发布；仅帮助师生寻找专家，不限制使用权限。"><div className="form-grid"><Field label="常用人群"><select aria-label="常用人群" value={c.discovery?.audience ?? 'staff'} onChange={e => { const audience = e.target.value as 'student' | 'staff'; set({ discovery: { audience, category: campusAgentCategories.find(category => category.audience === audience)!.id } }) }}><option value="student">学生常用</option><option value="staff">教职工常用</option></select></Field><Field label="用途分类"><select aria-label="用途分类" value={c.discovery?.category ?? 'campus-office'} onChange={e => set({ discovery: { audience: c.discovery?.audience ?? 'staff', category: e.target.value } })}>{campusAgentCategories.filter(category => category.audience === (c.discovery?.audience ?? 'staff')).map(category => <option key={category.id} value={category.id}>{category.name}</option>)}</select></Field></div><p className="record-note">来源：学校发布。默认助理为固定系统服务；个人专家仅归属本人，不进入公共发布。</p></Section>
       <Section title="回答规则"><Field label="系统提示词" required hint="写清职责、工作步骤和边界；需要外部操作时调用已配置的工具，并以执行结果为依据。"><textarea aria-label="系统提示词" value={c.prompt} rows={9} maxLength={8000} placeholder="你是一位学习规划专家。通过提问了解用户的目标与时间安排，提供具体建议。信息不足时先追问。仅使用已配置并获准的工具；需要用户确认时先确认，再执行。" onChange={e => set({ prompt: e.target.value })} /></Field></Section>
       <Section title="开始聊天" description="选填，帮助用户开始第一轮对话。"><Field label="开场白"><textarea aria-label="开场白" value={c.opening} maxLength={200} rows={2} placeholder="你好，可以说说你想了解什么。" onChange={e => set({ opening: e.target.value })} /></Field><Field label="推荐问题" hint="每行一条，最多 4 条，每条最多 80 字。"><textarea aria-label="推荐问题" value={c.expert?.questions.join('\n') ?? ''} rows={4} onChange={e => set({ expert: { ...(c.expert ?? profileDefaults()), key: agent?.key ?? c.expert?.key ?? (agent ? generatedKey(c.name, state, agent.id) : ''), questions: e.target.value.split('\n') } })} /></Field></Section>
       </>}
@@ -108,5 +118,5 @@ function ChatExpertEditor({ agent, state, actor, route, navigate, commit, busy, 
 function VersionDetail({ state, agent, version, onClose }: { state: CampusState; agent: Agent; version: number; onClose: () => void }) {
   const snapshot = agent.versions.find(v => v.number === version)!
   const c = snapshot.config
-  return <Modal title={`发布版本 v${version}`} onClose={onClose}><Facts items={[["专家名称", c.name], ['模型', agentModelName(state, c, true)], ['发布人', snapshot.actor], ['发布时间', formatTime(snapshot.at)], ['发布说明', snapshot.note]]} /><h3>专家简介</h3><p>{c.description || '未填写'}</p><h3>系统提示词</h3><p className="chat-snapshot-prompt">{c.prompt}</p><h3>开场白与推荐问题</h3><p>{c.opening || '未填写开场白'}</p>{c.expert?.questions.map((q,i) => <p key={i}>{q}</p>)}<ExpertExecutionDetails config={c} state={state} /><footer><Button onClick={onClose}>关闭详情</Button></footer></Modal>
+  return <Modal title={`发布版本 v${version}`} onClose={onClose}><Facts items={[["专家名称", c.name], ['模型', agentModelName(state, c, true)], ['发布人', snapshot.actor], ['发布时间', formatTime(snapshot.at)], ['发布说明', snapshot.note], ['常用人群', c.discovery?.audience === 'student' ? '学生常用' : '教职工常用'], ['用途分类', campusAgentCategories.find(category => category.id === c.discovery?.category)?.name ?? '校务办公']]} /><h3>专家简介</h3><p>{c.description || '未填写'}</p><h3>系统提示词</h3><p className="chat-snapshot-prompt">{c.prompt}</p><h3>开场白与推荐问题</h3><p>{c.opening || '未填写开场白'}</p>{c.expert?.questions.map((q,i) => <p key={i}>{q}</p>)}<ExpertExecutionDetails config={c} state={state} /><footer><Button onClick={onClose}>关闭详情</Button></footer></Modal>
 }

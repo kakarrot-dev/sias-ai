@@ -45,12 +45,15 @@ it('filters user source and access, distinguishes current source from inspecting
 it('keeps wallet, quota and subscription amounts separate, with zero distinct from missing', () => {
   const users = prototypeStore().state().campus!.userCenter!.users
   const { rerender } = render(<UserModelAccess key="lin" user={users.find(u => u.id === 'lin')!} usage />)
+  fireEvent.click(screen.getByText('上游额度与费用（原币）'))
   expect(screen.getByText('账号钱包余额（Key 返回）')).toBeVisible(); expect(screen.getByText('28.5 USD')).toBeVisible()
   expect(screen.queryByText('Key 剩余额度')).not.toBeInTheDocument()
   rerender(<UserModelAccess key="xu" user={users.find(u => u.id === 'xu')!} usage />)
+  fireEvent.click(screen.getByText('上游额度与费用（原币）'))
   expect(screen.getByText('Key 剩余额度')).toBeVisible(); expect(screen.getAllByText('0 USD').length).toBeGreaterThan(0)
   expect(screen.queryByText('账号钱包余额（Key 返回）')).not.toBeInTheDocument()
   rerender(<UserModelAccess key="li" user={users.find(u => u.id === 'li')!} usage />)
+  fireEvent.click(screen.getByText('上游额度与费用（原币）'))
   expect(screen.getByText('订阅剩余额度')).toBeVisible(); expect(screen.getByText('18 USD')).toBeVisible()
   expect(displayMoney(undefined, 'USD')).toBe('未提供'); expect(displayMoney(0, 'USD')).toBe('0 USD')
 })

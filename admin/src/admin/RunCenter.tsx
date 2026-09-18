@@ -1,3 +1,4 @@
+import { ServiceOutcomes } from './ServiceOutcomes'
 import { useId, useState } from 'react'
 import { Button, Empty, Facts, Modal, Notice, PageHeader, SearchField, Tag, formatTime } from './components'
 import { departments, models, roleLabels, type Actor, type CampusState } from './campus/model'
@@ -23,23 +24,24 @@ function readActor(): Actor {
 export function RunCenter({ data, route = '/runs', navigate }: { data: AdminState; route?: string; navigate?: (path: string) => void }) {
   const params = new URLSearchParams(route.split('?')[1]); const userId = params.get('user') ?? undefined
   if (userId && !data.campus?.userCenter?.users.some(u => u.id === userId)) return <Empty title="用户不存在" description="请从用户中心选择已有用户。" action={<Button onClick={() => navigate?.('/users')}>返回用户中心</Button>} />
-  return <><PageHeader title="运行中心" description="追溯会话与模型调用，区分平台及个人 Key 的来源、用量和费用。" />{data.campus ? <ChatRecords state={data.campus} actor={readActor()} legacyAudits={data.audits} userId={userId} initialTab={['usage', 'calls', ...(!userId ? ['audit'] : [])].includes(params.get('view') ?? '') ? params.get('view')! : 'sessions'} onClearUser={() => navigate?.('/runs')} /> : <Empty title="记录暂不可用" description="请刷新原型数据后重试。" />}</>
+  return <><PageHeader title="运行中心" description="追溯会话与模型调用，区分平台及个人 Key 的来源、用量和费用。" />{data.campus ? <ChatRecords state={data.campus} actor={readActor()} legacyAudits={data.audits} userId={userId} trace={params.get('trace')} initialTab={['usage', 'calls', 'outcomes', ...(!userId ? ['audit'] : [])].includes(params.get('view') ?? '') ? params.get('view')! : 'sessions'} onClearUser={() => navigate?.('/runs')} /> : <Empty title="记录暂不可用" description="请刷新原型数据后重试。" />}</>
 }
-export function ChatRecords({ state, actor, agentId, userId, initialTab = 'sessions', onClearUser, legacyAudits = [] }: { state: CampusState; actor: Actor; agentId?: string; userId?: string; initialTab?: string; onClearUser?: () => void; legacyAudits?: AuditRecord[] }) {
+export function ChatRecords({ state, actor, agentId, userId, initialTab = 'sessions', onClearUser, legacyAudits = [], trace }: { trace?: string | null; state: CampusState; actor: Actor; agentId?: string; userId?: string; initialTab?: string; onClearUser?: () => void; legacyAudits?: AuditRecord[] }) {
   const [tab, setTab] = useState(initialTab); const tabId = useId()
   const sessions = visibleChatSessions(state, actor, agentId).filter(s => !userId || s.user === userId)
   const usage = summarizeUsage(callsFor(sessions))
   return <div className="chat-records">
     <div className="record-context"><span>查看范围：{roleLabels[actor.role]} · {['admin', 'auditor'].includes(actor.role) ? '会话与用量可见' : '会话与用量无查看权限'}</span><span>会话与用量为固定示例 · 2026/09/17</span></div>
     {userId && <Notice>当前用户：{state.userCenter?.users.find(u => u.id === userId)?.displayName ?? userId} · {userId}{onClearUser && <Button onClick={onClearUser}>查看全部用户记录</Button>}</Notice>}
-    <div className="record-metrics" aria-label="当前范围统计">
+    {tab !== 'outcomes' && <div className="record-metrics" aria-label="当前范围统计">
       <div><span>会话数</span><strong>{sessions.length}<small>个</small></strong></div>
       <div><span>使用用户</span><strong>{new Set(sessions.map(s => s.user)).size}<small>人</small></strong></div>
       <div><span>已上报 Token</span><strong>{usage.count ? number(usage.total) : '—'}</strong><small>{!usage.count ? '暂无模型调用' : usage.pending ? '部分用量待补报' : '已汇总输入与输出'}</small></div>
       <div><span>待补报调用</span><strong>{usage.pending}<small>次</small></strong><small>共 {usage.count} 次模型调用</small></div>
-    </div>
-    <div className="editor-tabs" role="tablist" aria-label="记录类型">{[['sessions', '会话记录'], ['calls', '模型调用'], ['usage', '用量统计'], ...(!userId ? [['audit', '管理审计']] : [])].map(([id, label]) => <button key={id} id={`${tabId}-${id}`} role="tab" aria-selected={tab === id} aria-controls={`${tabId}-panel`} onClick={() => setTab(id)}>{label}</button>)}</div>
+    </div>}
+    <div className="editor-tabs" role="tablist" aria-label="记录类型">{[['sessions', '会话记录'], ['calls', '模型调用'], ...(!userId ? [['outcomes', '服务结果与人民币用量']] : []), ['usage', '用量统计'], ...(!userId ? [['audit', '管理审计']] : [])].map(([id, label]) => <button key={id} id={`${tabId}-${id}`} role="tab" aria-selected={tab === id} aria-controls={`${tabId}-panel`} onClick={() => setTab(id)}>{label}</button>)}</div>
     <div id={`${tabId}-panel`} role="tabpanel" aria-labelledby={`${tabId}-${tab}`}>
+      {tab === 'outcomes' && ['admin', 'auditor'].includes(actor.role) && <ServiceOutcomes trace={trace} agentId={agentId} />}
       {tab === 'sessions' && <SessionPanel sessions={sessions} scoped={!!agentId} />}
       {tab === 'calls' && <ModelCallsPanel sessions={sessions} />}
       {tab === 'usage' && <UsagePanel sessions={sessions} scoped={!!agentId} userId={userId} users={['admin', 'auditor'].includes(actor.role) ? (state.userCenter?.users ?? []).filter(u => !userId || u.id === userId) : []} />}

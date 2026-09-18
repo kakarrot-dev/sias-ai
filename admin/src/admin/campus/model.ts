@@ -1,3 +1,4 @@
+import { campusAgentCategories } from '../../../../frontend/prototypes/macos-client-v2/src/campus-agent-catalog'
 import { agentAvailable, expertMvpEnabled, chatExpertAvailable, multiAgentEnabled, singleAgentOnlyMessage } from './availability'
 import { definitionIssues, handoffEnabled } from './agent-definition'
 import { expertIssues, expertEditingConfig } from './expert-form'
@@ -37,6 +38,7 @@ export interface Binding extends ToolAccess { id: string; version: string; read:
 export interface HumanNode { id: string; name: string; trigger: string; approver: string; tool: string }
 export interface Pin { id: string; version: number; draftDigest?: string }
 export interface Config {
+  discovery?: { audience: 'student' | 'staff'; category: string }
   mode?: 'chat' | 'agent'
   definition?: import('./agent-definition').AgentDefinition
   schemaVersion?: '1.1' | '2.0'
@@ -64,7 +66,7 @@ export interface Snapshot { grants?: Grant[]; number: number; config: Config; te
 export interface Agent { dutyType?: 'captain'; usageMode?: 'public' | 'internal'; deletedAt?: string; id: string; key?: string; kind: Kind; draft: Config; draftPending?: boolean; versions: Snapshot[]; live?: number; disabled: boolean; tests: TestRound[]; grants: Grant[]; sync: 'synced' | 'pending' | 'failed'; pending?: { digest: string; note: string; actor: string; at: string; failed?: boolean }; testHistory?: TestRound[]; rejection?: string; updated: string; updatedBy: string; credentialChecked: boolean }
 export interface Run { id: string; session: string; agentId: string; version: number; user: string; department: string; model: string; goal: string; status: string; review: string; effect: string; result: string; tokens: number | null; at: string; policy: string; members: Pin[] }
 export interface Audit { id: string; agentId: string; actor: string; action: string; at: string; before: string; after: string; basis: string; impact: string }
-export interface CampusState { importedCapabilities?: Capability[]; modelCenter?: ModelCenterState; userCenter?: UserCenterState; managementVersion?: 2; expertCategories?: string[]; revision: number; agents: Agent[]; runs: Run[]; audits: Audit[] }
+export interface CampusState { serviceCatalogVersion?: 1; importedCapabilities?: Capability[]; modelCenter?: ModelCenterState; userCenter?: UserCenterState; managementVersion?: 2; expertCategories?: string[]; revision: number; agents: Agent[]; runs: Run[]; audits: Audit[] }
 export const isCaptain = (a: Agent) => a.kind === 'expert' && a.dutyType === 'captain'
 export const objectLabel = (a: Agent) => isCaptain(a) ? '队长智能体' : kindLabels[a.kind]
 export const platformSkillId = (role: 'captain' | 'assistant') => `capability.campus-${role}.v1`
@@ -73,6 +75,18 @@ export const platformBinding = (role: 'captain' | 'assistant'): Binding => {
   return { ...b, read: false, actions: skillActions(b) }
 }
 export function upgradeCampus(state: CampusState) {
+  // Add two shared review fixtures once; never overwrite edited drafts or published history.
+  if (!state.serviceCatalogVersion) {
+    for (const id of ['staff.literature-reader', 'staff.notice-writer']) {
+      if (state.agents.some(a => a.id === id)) continue
+      const category = campusAgentCategories.find(c => c.employees.some(e => e.id === id))!
+      const profile = category.employees.find(e => e.id === id)!
+      const config: Config = { ...blankConfig(), name: profile.name, description: profile.description, prompt: `你是${profile.name}。基于获准材料回复；缺少依据时说明；外部操作须本人确认并以回执为准。`, model: 'deepseek-v4', modelProviderId: 'prototype-relay', discovery: { audience: category.audience, category: category.id }, output: { mode: 'qa', sources: true, types: ['MD'] } }
+      if (id === 'staff.notice-writer') config.tools = [{ ...binding('notice'), version: '1.2', write: true, requiresConfirmation: true, confirmationFields: ['接收对象', '通知内容'] }]
+      state.agents.push({ id, kind: 'expert', usageMode: 'public', draft: config, versions: [{ number: 1, config: clone(config), tests: [], note: '前后台一致的产品演示样例', actor: '平台管理员（示例）', at: '2026-09-17T01:00:00Z', baseId: `${id}-v1` }], live: 1, disabled: false, tests: [], grants: [], sync: 'synced', updated: '2026-09-17T01:00:00Z', updatedBy: '平台管理员（示例）', credentialChecked: true })
+    }
+    state.serviceCatalogVersion = 1
+  }
   state.modelCenter ??= seedModelCenter()
   upgradeDemoModelNames(state.modelCenter)
   if (state.managementVersion === 2) return
@@ -353,6 +367,7 @@ export function expertMvpConfig(c: Config): Config {
 }
 export function expertMvpIssues(state: CampusState, id: string, c: Config, complete: boolean): string[] {
   const errors: string[] = []
+  if (c.discovery && !campusAgentCategories.some(category => category.id === c.discovery!.category && category.audience === c.discovery!.audience)) errors.push('请选择与常用人群匹配的用途分类')
   if (c.name.trim().length < 2 || c.name.trim().length > 20) errors.push('专家名称须为 2–20 字')
   if (state.agents.some(a => !a.deletedAt && a.id !== id && chatExpertAvailable(a) && a.draft.name.trim() === c.name.trim())) errors.push('专家名称已存在，请换一个名称')
   if (c.description.length > 200 || complete && !c.description.trim()) errors.push('请填写不超过 200 字的专家简介')
