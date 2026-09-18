@@ -1,7 +1,13 @@
 import type { ExpertDraft } from './expert-creation'
-import type { RecruitmentEmployee } from '../../../src/renderer/src/RecruitmentCatalog'
 
-export interface StudentAgentProfile extends RecruitmentEmployee {
+// A data-only profile so the admin prototype can reuse the same public catalog.
+export interface StudentAgentProfile {
+  id: string
+  name: string
+  description: string
+  color: string
+  avatarPosition?: string
+  sourcePath?: string
   configuration?: ExpertDraft
   prompt?: string
 }

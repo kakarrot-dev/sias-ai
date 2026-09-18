@@ -22,6 +22,7 @@
     "src/renderer/**/*.ts",
     "src/renderer/**/*.tsx",
     "src/shared/runtime-contract.ts",
+    "src/shared/service-prototype.ts",
     "src/shared/employee-contract.ts",
     "src/shared/expert-group-contract.ts",
     "src/shared/supervisor-contract.ts",
