@@ -60,4 +60,6 @@
 
 ## 5. 共享样式检查范围
 
+Web 聊天阅读区使用 `--type-chat-body-size`（复用 14px Heading 刻度）及 `--type-leading-chat`（1.75），用于消息正文和输入框。它们独立于紧凑导航和管理表单，解决持续阅读中文长消息时 12px 正文与 1.55 行高过密的问题；不改变其他页面的基础刻度。
+
 `prototype:check:typography` 同时扫描原型 CSS 与 `src/renderer/src/prototype-adapter.css`，检查字体族、字号、字重、行高和字距。界面和代码字体分别引用 `--type-family-interface`、`--type-family-code`；适配层必须使用已有语义角色，不能重新引入 13px、17px 等局部刻度。

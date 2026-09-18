@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
-import ReactMarkdown from 'react-markdown'
+import { Children, isValidElement, useEffect, useRef, useState, type ReactNode } from 'react'
+import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Download, Folder, NavArrowDown, NavArrowLeft, NavArrowRight, OpenNewWindow, Page, Sparks, Xmark } from 'iconoir-react'
+import { Check, Copy, Download, Folder, NavArrowDown, NavArrowLeft, NavArrowRight, OpenNewWindow, Page, Sparks, Xmark } from 'iconoir-react'
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from 'react-aria-components'
 import { legacyChatContent, type ChatContentView } from '../../../shared/chat-content-contract'
 import { Avatar, IconButton, DetailState, type DetailTone } from './client-ui'
@@ -51,27 +51,42 @@ function reducedMotionRequested(): boolean {
   return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-export function MarkdownContent({ children, className = '' }: { children: string; className?: string }): React.JSX.Element {
-  return <div className={`markdown-rendered${className ? ` ${className}` : ''}`}><ReactMarkdown remarkPlugins={[remarkGfm]}>{children}</ReactMarkdown></div>
+function MarkdownCodeBlock({ children }: { children?: ReactNode }): React.JSX.Element {
+  const code = Children.toArray(children)[0]
+  if (!isValidElement<{ children?: string; className?: string }>(code) || typeof code.props.children !== 'string') return <pre>{children}</pre>
+  const language = /(?:^|\s)language-([\w+-]+)/.exec(code.props.className ?? '')?.[1] ?? '代码'
+  return <figure className="markdown-code-block">
+    <figcaption><span>{language}</span><MessageCopyAction text={code.props.children} label="复制代码" /></figcaption>
+    <pre tabIndex={0} aria-label={`${language}代码内容`}>{children}</pre>
+  </figure>
 }
 
-export function MarkdownMessage({ children, compact = false }: { children: string; compact?: boolean }): React.JSX.Element {
+const markdownComponents: Components = {
+  pre: ({ children }) => <MarkdownCodeBlock>{children}</MarkdownCodeBlock>,
+  table: ({ children }) => <div className="markdown-table" role="region" aria-label="表格内容，可横向滚动" tabIndex={0}><table>{children}</table></div>
+}
+
+export function MarkdownContent({ children, className = '' }: { children: string; className?: string }): React.JSX.Element {
+  return <div className={`markdown-rendered${className ? ` ${className}` : ''}`}><ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>{children}</ReactMarkdown></div>
+}
+
+export function MarkdownMessage({ children, compact = false, collapsible = true, onExpandedChange }: { children: string; compact?: boolean; collapsible?: boolean; onExpandedChange?: (expanded: boolean) => void }): React.JSX.Element {
   const contentRef = useRef<HTMLDivElement>(null)
   const [expanded, setExpanded] = useState(false)
-  const [collapsible, setCollapsible] = useState(false)
+  const [hasOverflow, setHasOverflow] = useState(false)
 
   useEffect(() => {
     const content = contentRef.current
-    if (!content || expanded) return
-    const measure = (): void => setCollapsible(content.scrollHeight > content.clientHeight + 1)
+    if (!content || expanded || !collapsible) return
+    const measure = (): void => setHasOverflow(content.scrollHeight > content.clientHeight + 1)
     const frame = window.requestAnimationFrame(measure)
     if (typeof ResizeObserver === 'undefined') return () => window.cancelAnimationFrame(frame)
     const observer = new ResizeObserver(measure)
     observer.observe(content)
     return () => { observer.disconnect(); window.cancelAnimationFrame(frame) }
-  }, [children, expanded])
+  }, [children, expanded, collapsible])
 
-  return <div className={`markdown-message${compact ? ' markdown-message--compact' : ''}`}><div ref={contentRef} className={`markdown-message__content${collapsible ? ' is-collapsible' : ''}${expanded ? ' is-expanded' : ''}`}><MarkdownContent>{children}</MarkdownContent></div>{(collapsible || expanded) && <Button className="message-expand-button" aria-expanded={expanded} onPress={() => setExpanded((value) => !value)}>{expanded ? '收起' : '展开全文'}<NavArrowDown aria-hidden className={expanded ? 'is-expanded' : ''} /></Button>}</div>
+  return <div className={`markdown-message${compact ? ' markdown-message--compact' : ''}`}><div ref={contentRef} className={`markdown-message__content${hasOverflow && collapsible ? ' is-collapsible' : ''}${expanded || !collapsible ? ' is-expanded' : ''}`}><MarkdownContent>{children}</MarkdownContent></div>{collapsible && (hasOverflow || expanded) && <Button className="message-expand-button" aria-expanded={expanded} onPress={() => { onExpandedChange?.(!expanded); setExpanded(!expanded) }}>{expanded ? '收起' : '展开全文'}<NavArrowDown aria-hidden className={expanded ? 'is-expanded' : ''} /></Button>}</div>
 }
 
 export function ChatContentBlock({ content, variant = 'timeline', children }: { content: ChatContentView; variant?: 'timeline' | 'delivery'; children?: ReactNode }): React.JSX.Element {
@@ -93,14 +108,44 @@ export function TimelineSummary({ content, children, fallbackTitle }: { content?
 export interface ChatMessageProps extends AgentMessageIdentity {
   source: 'user' | 'agent'
   time: string
+  dateTime?: string
   variant?: 'message' | 'timeline'
   status?: ReactNode
+  headerStatus?: ReactNode
+  attachments?: ReactNode
+  copyText?: string
   surface?: 'bubble' | 'none'
   children: ReactNode
 }
 
-export function ChatMessage({ source, name, initials, color, time, avatarSrc, variant = 'message', status, surface = 'bubble', children }: ChatMessageProps): React.JSX.Element {
-  return <article className={`message-block message-block--${source}${variant === 'timeline' ? ' message-block--timeline message-stream-item' : ''}`}><Avatar label={name} initials={initials} color={color} size="small" src={avatarSrc} /><div className="message-block__stack"><div className="message-author"><strong>{name}</strong><time>{time}</time></div>{surface === 'none' ? children : <div className="message-bubble">{status && <div className="message-bubble__status">{status}</div>}{children}</div>}</div></article>
+export function ChatMessage({ source, name, initials, color, time, dateTime, avatarSrc, variant = 'message', status, headerStatus, attachments, copyText, surface = 'bubble', children }: ChatMessageProps): React.JSX.Element {
+  return <article aria-label={`${name}的消息`} className={`message-block message-block--${source}${variant === 'timeline' ? ' message-block--timeline message-stream-item' : ''}`}>
+    <Avatar label={name} initials={initials} color={color} size="small" src={avatarSrc} />
+    <div className="message-block__stack">
+      <div className="message-author"><strong>{name}</strong>{headerStatus && <span className="message-author__status">{headerStatus}</span>}<time dateTime={dateTime} title={dateTime ? new Date(dateTime).toLocaleString('zh-CN', { hour12: false }) : undefined}>{time}</time></div>
+      {surface === 'none' ? children : <div className="message-bubble">{status && <div className="message-bubble__status">{status}</div>}{children}</div>}
+      {attachments}
+      {copyText && <MessageCopyAction text={copyText} />}
+    </div>
+  </article>
+}
+
+function MessageCopyAction({ text, label = '复制消息' }: { text: string; label?: string }): React.JSX.Element {
+  const [state, setState] = useState<'idle' | 'copying' | 'copied' | 'failed'>('idle')
+  useEffect(() => {
+    if (state !== 'copied') return
+    const timer = window.setTimeout(() => setState('idle'), 2000)
+    return () => window.clearTimeout(timer)
+  }, [state])
+  const copy = async (): Promise<void> => {
+    setState('copying')
+    try { await navigator.clipboard.writeText(text); setState('copied') }
+    catch { setState('failed') }
+  }
+  return <div className="message-actions">
+    <Button className="message-copy-button" aria-label={label} isDisabled={state === 'copying'} onPress={() => { void copy() }}>{state === 'copied' ? <Check aria-hidden /> : <Copy aria-hidden />}<span>{state === 'copied' ? '已复制' : '复制'}</span></Button>
+    <span className="message-copy-feedback" role="status">{state === 'copied' ? '已复制到剪贴板' : state === 'failed' ? '复制失败，请选择正文手动复制' : ''}</span>
+  </div>
 }
 
 const agentActivityLabels: Record<AgentActivityState, string> = {
@@ -181,10 +226,10 @@ export function AttachmentOpenMenu({ attachment, openMode = 'system', onOpen, on
   </MenuTrigger>
 }
 
-export function MessageAttachmentGroup({ attachments, source, embedded = false, onRemove, openMode, onOpen, onReveal, onDownload }: { attachments: MessageAttachment[]; source: 'user' | 'agent'; embedded?: boolean; onRemove?: (id: string) => void } & AttachmentActions): React.JSX.Element | null {
+export function MessageAttachmentGroup({ attachments, source, embedded = false, layout = 'auto', onRemove, openMode, onOpen, onReveal, onDownload }: { attachments: MessageAttachment[]; source: 'user' | 'agent'; embedded?: boolean; layout?: 'auto' | 'list'; onRemove?: (id: string) => void } & AttachmentActions): React.JSX.Element | null {
   const rowsRef = useRef<HTMLDivElement>(null)
   const [carouselState, setCarouselState] = useState({ current: 1, canPrevious: false, canNext: false })
-  const isTimelineCarousel = source === 'user' && attachments.length > 1 && !onRemove
+  const isTimelineCarousel = layout !== 'list' && source === 'user' && attachments.length > 1 && !onRemove
   const updateCarouselState = (): void => {
     const rows = rowsRef.current
     if (!rows || !isTimelineCarousel) return
@@ -213,7 +258,7 @@ export function MessageAttachmentGroup({ attachments, source, embedded = false, 
 
   if (!attachments.length) return null
   const multiple = attachments.length > 1
-  return <div className={`message-attachments message-attachments--${source} message-attachments--${multiple ? 'multiple' : 'single'}${embedded ? ' message-attachments--embedded' : ''}${isTimelineCarousel ? ' message-attachments--carousel' : ''}`}>
+  return <div className={`message-attachments message-attachments--${source} message-attachments--${multiple ? 'multiple' : 'single'}${layout === 'list' ? ' message-attachments--list' : ''}${embedded ? ' message-attachments--embedded' : ''}${isTimelineCarousel ? ' message-attachments--carousel' : ''}`}>
     {multiple && <div className="message-attachments__header"><span>{source === 'agent' ? <Sparks aria-hidden /> : <Page aria-hidden />}{attachments.length} 个附件</span>{isTimelineCarousel && (carouselState.canPrevious || carouselState.canNext) && <span className="attachment-carousel-navigation"><small>{carouselState.current} / {attachments.length}</small><IconButton label="查看上一份附件" icon={NavArrowLeft} onClick={() => moveCarousel(-1)} disabled={!carouselState.canPrevious} /><IconButton label="查看下一份附件" icon={NavArrowRight} onClick={() => moveCarousel(1)} disabled={!carouselState.canNext} /></span>}</div>}
     <div className="message-attachments__rows" ref={rowsRef} onScroll={isTimelineCarousel ? updateCarouselState : undefined}>{attachments.map((attachment) => <div className="message-attachment-row" key={attachment.id}><span className="message-attachment-row__icon"><Page aria-hidden /></span><span className="message-attachment-row__body"><strong title={attachment.name}>{attachment.name}</strong><small>{attachment.detail}</small></span>{onRemove ? <IconButton label={`移除 ${attachment.name}`} icon={Xmark} onClick={() => onRemove(attachment.id)} /> : source === 'agent' ? <span className="message-attachment-row__actions"><AttachmentOpenMenu attachment={attachment} openMode={openMode} onOpen={onOpen} onReveal={onReveal} onDownload={onDownload} /></span> : <IconButton label={`打开 ${attachment.name}`} icon={NavArrowRight} onClick={() => onOpen?.(attachment.id)} disabled={!onOpen} />}</div>)}</div>
   </div>

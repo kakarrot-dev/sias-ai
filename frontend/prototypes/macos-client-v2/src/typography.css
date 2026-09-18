@@ -47,6 +47,8 @@
   --type-form-input-size: var(--type-size-heading);
   --type-form-help-size: var(--type-size-body);
   --type-input-size: var(--type-size-body);
+  --type-chat-body-size: var(--type-size-heading);
+  --type-leading-chat: 1.75;
   --type-label-size: var(--type-size-secondary);
   --type-status-size: var(--type-size-secondary);
   --type-meta-size: var(--type-size-meta);

@@ -312,7 +312,9 @@ const visibleScrollbarSurfaces = scrollSurfaces.filter(
   (selector) => !styles.includes(`${selector}::-webkit-scrollbar`)
 )
 
-if (visibleScrollbarSurfaces.length || styles.includes('scrollbar-width: thin') || styles.includes('scrollbar-color:')) {
+const contentScrollbarSelectors = new Set(['.markdown-rendered pre', '.markdown-table'])
+const unexpectedScrollbarStyles = [...styles.matchAll(/([^{}]+)\{([^{}]+)\}/g)].filter(([, selector, body]) => /scrollbar-width:\s*thin|scrollbar-color:/.test(body) && !contentScrollbarSelectors.has(selector.trim()))
+if (visibleScrollbarSurfaces.length || unexpectedScrollbarStyles.length) {
   errors.push(`滚动容器未完整复用隐藏滚动条契约: ${visibleScrollbarSurfaces.join(', ') || '存在可见滚动条样式'}`)
 }
 
@@ -377,8 +379,8 @@ if (!app.includes('SettingsBlock title="个人资料"') || !rendererSystem.inclu
 for (const marker of ['className="employee-identity-editor"']) {
   if (!app.includes(marker) || !rendererSystem.includes(marker)) errors.push(`个人资料未复用精简身份布局: ${marker}`)
 }
-if (!app.includes('className="personal-profile-facts"') || !app.includes('<dt>姓名</dt>') || !app.includes('<dt>学号</dt>') || app.includes('aria-label="个人名称"')) {
-  errors.push('Web 个人资料必须以只读文字展示姓名和学号，仅头像可上传')
+if (!app.includes('className="personal-profile-facts"') || !app.includes('<dt>姓名</dt>') || !app.includes("identity === 'staff' ? '工号' : identity === 'student' ? '学号' : '校园编号'") || app.includes('aria-label="个人名称"')) {
+  errors.push('Web 个人资料必须以只读文字展示姓名及按身份提供的校园编号，仅头像可上传')
 }
 if (!rendererSystem.includes('aria-label="个人名称"')) errors.push('正式客户端个人名称编辑行为不应随 Web 原型变更')
 
@@ -414,7 +416,7 @@ for (const marker of ['<ClientToolbar', 'conversation-workspace is-sidebar-colla
   if (!app.includes(marker)) errors.push(`Web 消息页缺少共享布局或单智能体会话契约: ${marker}`)
 }
 
-for (const marker of ['<ReactMarkdown remarkPlugins={[remarkGfm]}>', 'className="attachment-carousel-navigation"', 'label="查看上一份附件"', 'label="查看下一份附件"']) {
+for (const marker of ['<ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>', 'className="attachment-carousel-navigation"', 'label="查看上一份附件"', 'label="查看下一份附件"']) {
   if (!rendererMessageComponents.includes(marker)) errors.push(`缺少消息折叠或附件导航复用组件: ${marker}`)
 }
 for (const marker of ['function MarkdownMessage', 'aria-expanded={expanded}']) {

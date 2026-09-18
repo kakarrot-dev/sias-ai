@@ -80,6 +80,9 @@
   --layout-composer-textarea-max-height: 104px;
   --layout-composer-control-size: 32px;
   --layout-composer-attachment-size: 88px;
+  --layout-composer-file-width: 236px;
+  --layout-composer-file-thumbnail-size: 48px;
+  --layout-composer-files-max-height: 160px;
   --layout-composer-scroll-fade-height: 24px;
 
   /* Reusable modal shell. */

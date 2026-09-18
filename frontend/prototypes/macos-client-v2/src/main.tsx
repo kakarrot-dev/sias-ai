@@ -6,6 +6,7 @@ import './typography.css'
 import './styles.css'
 import '../../../src/renderer/src/prototype-adapter.css'
 import './campus-shell.css'
+import './chat.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

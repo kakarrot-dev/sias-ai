@@ -1,14 +1,20 @@
+import { ModelAccess, ServiceUsage, ServiceResult, PrototypeScenarios, initialServiceSettings, serviceBlock, type ServiceSettings, type ResultInteraction } from './ServiceExperience'
+import { attachmentIssue, makeServiceRecord, parseExpertPreview, sourceName, type PublicExpertPreview, type ServiceRecord, type ServiceScenario } from '../../../src/shared/service-prototype'
 import { NewConversationHeader, NewConversationActions } from './NewConversationWelcome'
+import { ConversationBriefForm, emptyConversationBrief, type ConversationBrief } from './ConversationBriefForm'
+import documentStructureExample from './conversation-example.md?raw'
 import { ArchivedConversationsPage } from './ArchivedConversationsPage'
 import { AgentCatalogPage } from './AgentCatalogPage'
 import { CreateExpertPage } from './CreateExpertPage'
 import { blankExpertDraft, expertCapabilities, expertQuestions, type ExpertDraft } from './expert-creation'
 import { campusAgentCategories } from './campus-agent-catalog'
 import { employeeAvatarSrc, supervisorIdentity } from '../../../src/renderer/src/employee-avatar'
-import React, { useEffect, useRef, useState } from 'react'
+import { formatClientTimestamp } from '../../../src/renderer/src/client-time'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { ComponentType, FormEvent, ReactNode } from 'react'
 import {
   Archive,
+  ArrowDown,
   ArrowUp,
   Book,
   Brain,
@@ -53,6 +59,7 @@ import {
   DetailPage, DetailSummaryPanel, DetailSectionHeader, DetailState, SettingsBlock
 } from '../../../src/renderer/src/components/client-ui'
 import { ChatMessage, MarkdownMessage, MarkdownContent, MessageAttachmentGroup as ClientMessageAttachmentGroup, fileDetail } from '../../../src/renderer/src/components/message-ui'
+import { ComposerAttachmentTray } from '../../../src/renderer/src/components/composer-attachments'
 import githubConnectionIcon from '../../../src/renderer/src/assets/connections/github.svg'
 import feishuConnectionIcon from '../../../src/renderer/src/assets/connections/feishu.svg'
 import teamsConnectionIcon from '../../../src/renderer/src/assets/connections/teams.svg'
@@ -66,12 +73,13 @@ import baiduNetdiskConnectionIcon from '../../../src/renderer/src/assets/connect
 import giteeConnectionIcon from '../../../src/renderer/src/assets/connections/gitee.svg'
 import alibabaCloudConnectionIcon from '../../../src/renderer/src/assets/connections/alibaba-cloud.svg'
 
-type PageId = 'messages' | 'contacts' | 'capabilities' | 'connections' | 'personal' | 'archives' | 'create-expert'
+type PageId = 'messages' | 'contacts' | 'capabilities' | 'connections' | 'personal' | 'archives' | 'create-expert' | 'model-access'
 type IconComponent = ComponentType<{ width?: number | string; height?: number | string; strokeWidth?: number; 'aria-hidden'?: boolean }>
 type StatusTone = 'active' | 'waiting' | 'success' | 'danger' | 'muted'
 type DetailView = 'capability-info' | null
 
 interface Conversation {
+  scenario?: ServiceScenario
   id: string
   title: string
   preview: string
@@ -93,6 +101,8 @@ function employeeAvatarForName(name: string): string | undefined {
 }
 
 interface Agent {
+  version?: number
+  preview?: PublicExpertPreview
   id: string
   name: string
   initials: string
@@ -142,6 +152,10 @@ interface MessageAttachment {
 }
 
 interface LocalMessage {
+  interaction?: ResultInteraction
+  result?: ServiceRecord
+  id: string
+  createdAt: string
   text: string
   attachments: MessageAttachment[]
 }
@@ -150,9 +164,17 @@ interface ConversationSession {
   draft: string
   attachments: MessageAttachment[]
   messages: LocalMessage[]
+  brief?: ConversationBrief
+  briefSubmitted?: boolean
 }
 
 const emptyConversationSession: ConversationSession = { draft: '', attachments: [], messages: [] }
+const prototypeReply = '这是一条单智能体对话的演示回复。你的消息和附件仅保留在当前会话中，尚未调用模型处理。'
+
+function messageDateLabel(value: string): string {
+  const date = new Date(value)
+  return date.toDateString() === new Date().toDateString() ? '今天' : date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })
+}
 
 const exampleUserAttachments: MessageAttachment[] = [
   { id: 'brief', name: 'SEA-SaaS-研究需求.pdf', detail: 'PDF · 1.8 MB' },
@@ -200,7 +222,7 @@ const initialAgents: Agent[] = [
 const catalogAgents: Agent[] = campusAgentCategories.flatMap((category) => category.employees.map((employee) => ({
   id: employee.id, name: employee.name, initials: employee.name.slice(0, 1), role: category.name,
   status: '可对话', tone: 'success', description: employee.description, color: employee.color,
-  avatarUrl: employeeAvatarSrc({ employeeId: employee.id }), capabilities: [], deliveries: []
+  avatarUrl: employeeAvatarSrc({ employeeId: employee.id }), model: 'deepseek-v4', version: 1, capabilities: [], deliveries: []
 })))
 
 // Each conversation belongs to exactly one agent; the snapshot preserves history after deletion.
@@ -336,7 +358,7 @@ function ConversationRow({ conversation, selected, onPress, onArchive }: { conve
   )
 }
 
-function MessageAttachmentGroup({ attachments, source, embedded = false, onRemove }: { attachments: MessageAttachment[]; source: 'user' | 'agent'; embedded?: boolean; onRemove?: (id: string) => void }): React.JSX.Element | null {
+function MessageAttachmentGroup({ attachments, source, onRemove }: { attachments: MessageAttachment[]; source: 'user' | 'agent'; onRemove?: (id: string) => void }): React.JSX.Element | null {
   const [preview, setPreview] = useState<MessageAttachment | null>(null)
   const [fileUrl, setFileUrl] = useState('')
   useEffect(() => {
@@ -348,8 +370,8 @@ function MessageAttachmentGroup({ attachments, source, embedded = false, onRemov
   if (!attachments.length) return null
   const canOpen = attachments.every((attachment) => attachment.file)
   return <>
-    <ClientMessageAttachmentGroup attachments={attachments} source={source} embedded={embedded} onRemove={onRemove} openMode="preview" onOpen={canOpen ? (id) => setPreview(attachments.find((attachment) => attachment.id === id) ?? null) : undefined} />
-    {!onRemove && !canOpen && <p className="quiet-meta">示例附件未提供文件，无法打开或下载。</p>}
+    {onRemove ? <ComposerAttachmentTray attachments={attachments} onRemove={onRemove} onOpen={(id) => setPreview(attachments.find((attachment) => attachment.id === id) ?? null)} /> : <ClientMessageAttachmentGroup attachments={attachments} source={source} layout="list" openMode="preview" onOpen={canOpen ? (id) => setPreview(attachments.find((attachment) => attachment.id === id) ?? null) : undefined} />}
+    {!onRemove && !canOpen && <p className="message-attachment-note">示例附件未提供文件，无法打开或下载。</p>}
     <ModalOverlay isOpen={Boolean(preview)} onOpenChange={(open) => !open && setPreview(null)} isDismissable className="modal-overlay modal-overlay--nested"><Modal className="app-modal app-modal--medium"><Dialog className="modal-dialog" aria-label="附件预览"><div className="modal-header"><Heading slot="title">{preview?.name}</Heading><IconButton label="关闭" icon={Xmark} onPress={() => setPreview(null)} /></div><div className="modal-content"><p>{preview?.detail}</p>{fileUrl && preview?.file?.type.startsWith('image/') && <img className="attachment-image-preview" src={fileUrl} alt={preview.name} />}{fileUrl && <a className="button button--primary" href={fileUrl} download={preview?.name}>下载文件</a>}</div></Dialog></Modal></ModalOverlay>
   </>
 }
@@ -370,7 +392,7 @@ function DirectoryPane({ page, conversations, onArchiveConversation, selectedCon
 }): React.JSX.Element {
   const [query, setQuery] = useState('')
   const [capabilityFilter, setCapabilityFilter] = useState<'skill' | 'tool'>('skill')
-  const pageTitle = { messages: '聊天记录', contacts: '专家市场', capabilities: '能力', connections: '连接', personal: '个人中心', archives: '归档对话', 'create-expert': '创建专家' }[page]
+  const pageTitle = { messages: '聊天记录', contacts: '专家市场', capabilities: '能力', connections: '连接', personal: '个人中心', archives: '归档对话', 'create-expert': '创建专家', 'model-access': '模型接入' }[page]
   const filteredConversations = conversations.filter((item) => selectionIncludes([item.title, item.preview], query))
   const filteredCapabilities = capabilities.filter((item) => selectionIncludes([item.name, item.summary], query))
   const visibleCapabilities = filteredCapabilities.filter((item) => item.kind === capabilityFilter)
@@ -401,22 +423,55 @@ function DirectoryPane({ page, conversations, onArchiveConversation, selectedCon
   )
 }
 
-function MessagesPage({ conversation, agent, unavailable, session, onSessionChange, userProfile, onFindExpert }: { conversation: Conversation; agent: Agent; unavailable: boolean; session: ConversationSession; onSessionChange: (patch: Partial<ConversationSession>) => void; userProfile: UserProfile; onFindExpert: () => void }): React.JSX.Element {
-  const messageEndRef = useRef<HTMLDivElement>(null)
+function MessagesPage({ conversation, agent, unavailable, session, onSessionChange, userProfile, onFindExpert, settings, onAccess, onRecord, onLogin, onNewVersion }: { conversation: Conversation; agent: Agent; unavailable: boolean; session: ConversationSession; onSessionChange: (patch: Partial<ConversationSession>) => void; userProfile: UserProfile; onFindExpert: () => void; settings: ServiceSettings; onAccess: () => void; onRecord: (record: ServiceRecord) => void; onLogin: () => void; onNewVersion: () => void }): React.JSX.Element {
+  const availability = settings.availabilityAgentId && settings.availabilityAgentId !== agent.id ? 'active' : settings.availability
+  const block = serviceBlock({ ...settings, availability }, unavailable)
+  const [fileError, setFileError] = useState('')
+  const formats: Record<string, string[]> = { text: ['TXT', 'MD'], document: ['PDF', 'DOCX'], spreadsheet: ['XLSX', 'CSV'], image: ['PNG', 'JPG'], audio: ['MP3', 'WAV', 'M4A'] }
+  const fileRule = agent.preview ?? { inputs: agent.configuration ? agent.configuration.inputs.flatMap(input => formats[input] ?? []) : ['TXT', 'MD', 'PDF', 'DOCX', 'XLSX', 'CSV'], fileMB: 20, count: 10, totalMB: 100 }
+  const messageScrollRef = useRef<HTMLDivElement>(null)
+  const messageCanvasRef = useRef<HTMLDivElement>(null)
+  const followLatestRef = useRef(true)
+  const [showLatest, setShowLatest] = useState(false)
   const [composerPanel, setComposerPanel] = useState<'model' | 'voice' | null>(null)
   const composerInputRef = useRef<HTMLTextAreaElement>(null)
   const { draft, attachments: draftAttachments, messages: localMessages } = session
   const isAssistantWelcome = conversation.isNew && localMessages.length === 0 && agent.id === assistantAgent.id
+  const pauseFollowing = (): void => { followLatestRef.current = false }
+  const examplePrompt = conversation.id === 'sea-saas' ? '帮我整理东南亚 SaaS 市场研究的资料结构，重点关注竞争格局和进入风险。' : '帮我梳理 Agent 产品介绍文档的结构。'
+  const exampleReply = conversation.id === 'sea-saas' ? '建议按**市场概况、竞争格局、进入风险、来源索引**组织资料。以下附件展示资料交付的样式，内容为原型示例，未进行真实检索。' : documentStructureExample
+  const revealLatest = (): void => {
+    const scroll = messageScrollRef.current
+    if (scroll) scroll.scrollTop = scroll.scrollHeight
+    followLatestRef.current = true
+    setShowLatest(false)
+  }
+  const updateScrollPosition = (): void => {
+    const scroll = messageScrollRef.current
+    if (!scroll) return
+    const nearBottom = scroll.scrollHeight - scroll.clientHeight - scroll.scrollTop < 80
+    followLatestRef.current = nearBottom
+    setShowLatest(!nearBottom)
+  }
   const chooseStarter = (prompt: string): void => {
     onSessionChange({ draft: draft.trim() ? `${draft.trimEnd()}\n\n${prompt}` : prompt })
     composerInputRef.current?.focus()
   }
-  const addAttachments = (files: File[]): void => onSessionChange({ attachments: [...draftAttachments, ...files.map((file) => ({ id: crypto.randomUUID(), name: file.name, detail: fileDetail(file), file }))] })
+  const addAttachments = (files: File[]): void => {
+    const issue = attachmentIssue([...draftAttachments.map(a => ({ name: a.name, size: a.file?.size ?? 0 })), ...files], fileRule)
+    setFileError(issue ?? '')
+    if (!issue) onSessionChange({ attachments: [...draftAttachments, ...files.map(file => ({ id: crypto.randomUUID(), name: file.name, detail: fileDetail(file), file }))] })
+  }
   const removeAttachment = (id: string): void => onSessionChange({ attachments: draftAttachments.filter((item) => item.id !== id) })
   const submit = (event: FormEvent): void => {
     event.preventDefault()
-    if (unavailable || (!draft.trim() && !draftAttachments.length)) return
-    onSessionChange({ messages: [...localMessages, { text: draft.trim(), attachments: draftAttachments }], draft: '', attachments: [] })
+    if (block || (!draft.trim() && !draftAttachments.length)) return
+    const scenario = conversation.scenario ?? (agent.id === 'staff.literature-reader' ? 'literature' : (agent.preview ? agent.preview.notice : agent.id === 'staff.notice-writer') ? 'notice' : 'normal')
+    const result = makeServiceRecord({ id: `SIAS-${crypto.randomUUID().slice(0, 8).toUpperCase()}`, conversationId: conversation.id, agentId: agent.id, agentName: agent.name, version: agent.version ?? 1, model: agent.model ?? 'deepseek-v4', source: settings.source, scenario })
+    onRecord(result)
+    followLatestRef.current = true
+    onSessionChange({ messages: [...localMessages, { id: crypto.randomUUID(), createdAt: new Date().toISOString(), text: draft.trim(), attachments: draftAttachments, result }], draft: '', attachments: [] })
+    composerInputRef.current?.focus()
   }
 
   useEffect(() => {
@@ -426,37 +481,66 @@ function MessagesPage({ conversation, agent, unavailable, session, onSessionChan
     input?.setSelectionRange(input.value.length, input.value.length)
   }, [conversation.id, conversation.isNew])
 
+  useLayoutEffect(() => {
+    const input = composerInputRef.current
+    if (!input) return
+    input.style.height = 'auto'
+    input.style.height = `${input.scrollHeight}px`
+  }, [draft])
+
+  useLayoutEffect(revealLatest, [localMessages.length])
+
   useEffect(() => {
-    if (localMessages.length) messageEndRef.current?.scrollIntoView({ block: 'nearest' })
-  }, [localMessages.length])
+    const scroll = messageScrollRef.current, canvas = messageCanvasRef.current
+    if (!scroll || !canvas || typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(() => {
+      if (followLatestRef.current) revealLatest()
+      else updateScrollPosition()
+    })
+    observer.observe(scroll)
+    observer.observe(canvas)
+    return () => observer.disconnect()
+  }, [])
   return (
     <div className={`workspace-page message-page${isAssistantWelcome ? ' message-page--welcome' : ''}`}>
       <div className="conversation-workspace is-sidebar-collapsed">
       <div className="conversation-column">
-      <div className="message-scroll" aria-label="对话">
-        <div className="message-canvas">
-          {isAssistantWelcome ? <NewConversationHeader name={userProfile.name} /> : conversation.isNew && localMessages.length === 0 ? <div className="runtime-empty-state"><Avatar label={agent.name} initials={agent.initials} color={agent.color} size="large" src={agent.avatarUrl} /><h2>与{agent.name}对话</h2><p>{agent.description}</p>{agent.configuration?.opening && <p className="expert-chat-opening">{agent.configuration.opening}</p>}{agent.configuration && expertQuestions(agent.configuration).length > 0 && <div className="expert-chat-questions" aria-label="推荐问题">{expertQuestions(agent.configuration).map((question, index) => <button type="button" className="button button--quiet" key={index} onClick={() => { onSessionChange({ draft: question }); composerInputRef.current?.focus() }}>{question}</button>)}</div>}<p className="quiet-meta">本地原型演示 · 未连接模型，刷新后重置</p></div> : <div className="date-divider"><span>今天 · 示例对话</span></div>}
+      {!isAssistantWelcome && <div className="service-context"><span>{agent.id === 'assistant' ? '系统服务' : agent.id.startsWith('custom.') ? '个人专家 · 仅自己可见' : '学校发布'} · v{agent.version ?? 1} · {agent.model ?? 'deepseek-v4'}</span><button className="button button--quiet" onClick={onAccess}>{sourceName(settings.source)} · 管理接入</button></div>}
+      <div ref={messageScrollRef} className="message-scroll" aria-label="对话" role="region" tabIndex={0} onScroll={updateScrollPosition}>
+        <div ref={messageCanvasRef} className="message-canvas">
+          {isAssistantWelcome ? <NewConversationHeader name={userProfile.name} /> : conversation.isNew && localMessages.length === 0 ? <div className="runtime-empty-state"><Avatar label={agent.name} initials={agent.initials} color={agent.color} size="large" src={agent.avatarUrl} /><h2>与{agent.name}对话</h2><p>{agent.description}</p>{agent.configuration?.opening && <p className="expert-chat-opening">{agent.configuration.opening}</p>}{agent.configuration && expertQuestions(agent.configuration).length > 0 && <div className="expert-chat-questions" aria-label="推荐问题">{expertQuestions(agent.configuration).map((question, index) => <button type="button" className="button button--quiet" key={index} onClick={() => { onSessionChange({ draft: question }); composerInputRef.current?.focus() }}>{question}</button>)}</div>}<p className="quiet-meta">本地原型演示 · 未连接模型，刷新后重置</p></div> : !conversation.isNew ? <div className="date-divider"><span>示例对话</span></div> : null}
           {!conversation.isNew && <>
-            <ChatMessage source="user" name={userProfile.name.trim() || '本地用户'} initials={userProfile.name.trim().slice(0, 1) || '用'} color="#d9c5a6" avatarSrc={userProfile.avatarUrl ?? undefined} time="12:24"><MarkdownMessage>{conversation.id === 'sea-saas' ? '帮我整理东南亚 SaaS 市场研究的资料结构，重点关注竞争格局和进入风险。' : '帮我梳理 Agent 产品介绍文档的结构。'}</MarkdownMessage>{conversation.id === 'sea-saas' && <MessageAttachmentGroup attachments={exampleUserAttachments} source="user" />}</ChatMessage>
-            <ChatMessage source="agent" name={agent.name} initials={agent.initials} color={agent.color} avatarSrc={agent.avatarUrl ?? undefined} time="12:26" status={<StatusLight tone="muted" label="示例回复" />}><MarkdownMessage>{conversation.id === 'sea-saas' ? '建议按**市场概况、竞争格局、进入风险、来源索引**组织资料。以下附件展示资料交付的样式，内容为原型示例，未进行真实检索。' : '建议按**目标用户、核心问题、使用流程、能力边界**展开。你可以补充受众和用途，继续完善文档结构。此内容为原型示例。'}</MarkdownMessage>{conversation.id === 'sea-saas' && <MessageAttachmentGroup attachments={generatedAttachments} source="agent" />}</ChatMessage>
+            <ChatMessage source="user" name={userProfile.name.trim() || '本地用户'} initials={userProfile.name.trim().slice(0, 1) || '用'} color="#d9c5a6" avatarSrc={userProfile.avatarUrl ?? undefined} time="12:24" copyText={examplePrompt} attachments={conversation.id === 'sea-saas' && <MessageAttachmentGroup attachments={exampleUserAttachments} source="user" />}><MarkdownMessage onExpandedChange={pauseFollowing}>{examplePrompt}</MarkdownMessage></ChatMessage>
+            <ChatMessage source="agent" name={agent.name} initials={agent.initials} color={agent.color} avatarSrc={agent.avatarUrl ?? undefined} time="12:26" headerStatus="示例回复" copyText={exampleReply} attachments={conversation.id === 'sea-saas' && <MessageAttachmentGroup attachments={generatedAttachments} source="agent" />}><MarkdownMessage collapsible={false}>{exampleReply}</MarkdownMessage></ChatMessage>
+            {conversation.id === 'plain-qa' && <ChatMessage source="agent" name={agent.name} initials={agent.initials} color={agent.color} avatarSrc={agent.avatarUrl ?? undefined} time="12:27" headerStatus="示例表单" surface="none"><ConversationBriefForm value={session.brief ?? emptyConversationBrief} submitted={session.briefSubmitted ?? false} onChange={(brief) => onSessionChange({ brief })} onSubmit={() => onSessionChange({ briefSubmitted: true })} onEdit={() => onSessionChange({ briefSubmitted: false })} /></ChatMessage>}
           </>}
-          {localMessages.map((message, index) => <React.Fragment key={index}>
-            <ChatMessage source="user" name={userProfile.name.trim() || '本地用户'} initials={userProfile.name.trim().slice(0, 1) || '用'} color="#d9c5a6" avatarSrc={userProfile.avatarUrl ?? undefined} time="刚刚"><MarkdownMessage>{message.text || '已添加附件'}</MarkdownMessage><MessageAttachmentGroup attachments={message.attachments} source="user" /></ChatMessage>
-            <ChatMessage source="agent" name={agent.name} initials={agent.initials} color={agent.color} avatarSrc={agent.avatarUrl ?? undefined} time="刚刚" status={<StatusLight tone="muted" label="演示回复" />}><MarkdownMessage>这是一条单智能体对话的演示回复。你的消息和附件仅保留在当前会话中，尚未调用模型处理。</MarkdownMessage></ChatMessage>
-          </React.Fragment>)}
-          <div ref={messageEndRef} />
+          {localMessages.map((message, index) => {
+            const time = new Date(message.createdAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })
+            const showDate = index === 0 || new Date(localMessages[index - 1].createdAt).toDateString() !== new Date(message.createdAt).toDateString()
+            return <React.Fragment key={message.id}>
+              {showDate && <div className="date-divider"><span>{messageDateLabel(message.createdAt)}</span></div>}
+              <ChatMessage source="user" name={userProfile.name.trim() || '本地用户'} initials={userProfile.name.trim().slice(0, 1) || '用'} color="#d9c5a6" avatarSrc={userProfile.avatarUrl ?? undefined} time={time} dateTime={message.createdAt} copyText={message.text} attachments={<MessageAttachmentGroup attachments={message.attachments} source="user" />}><MarkdownMessage onExpandedChange={pauseFollowing}>{message.text || '已添加附件'}</MarkdownMessage></ChatMessage>
+              <ChatMessage source="agent" name={agent.name} initials={agent.initials} color={agent.color} avatarSrc={agent.avatarUrl ?? undefined} time={time} dateTime={message.createdAt} headerStatus="演示回复" copyText={prototypeReply}><MarkdownMessage onExpandedChange={pauseFollowing}>{prototypeReply}</MarkdownMessage>{message.result && <ServiceResult operationBlocked={settings.account !== 'active' || unavailable || availability === 'disabled'} interaction={message.interaction} onInteraction={patch => onSessionChange({ messages: localMessages.map(m => m.id === message.id ? { ...m, interaction: { ...m.interaction, ...patch } } : m) })} record={message.result} files={message.attachments.map(a => a.name)} change={result => { onSessionChange({ messages: localMessages.map(m => m.id === message.id ? { ...m, result } : m) }); onRecord(result) }} />}</ChatMessage>
+            </React.Fragment>
+          })}
         </div>
       </div>
       <form className="composer" onSubmit={submit}>
+        {showLatest && <Button className="conversation-latest" onPress={revealLatest}><ArrowDown aria-hidden />回到最新消息</Button>}
         <div className="composer__box">
-          {draftAttachments.length > 0 && <div className="composer-attachment-tray"><MessageAttachmentGroup attachments={draftAttachments} source="user" embedded onRemove={removeAttachment} /></div>}
-          <textarea disabled={unavailable} ref={composerInputRef} aria-label="发送消息" rows={2} value={draft} onChange={(event) => onSessionChange({ draft: event.target.value })} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && event.nativeEvent.keyCode !== 229) { event.preventDefault(); event.currentTarget.form?.requestSubmit() } }} placeholder={unavailable ? '该智能体已删除，历史对话仍可查看' : `发送给${agent.name}`} />
+          {block && <div className="service-block" role="status"><p>{block}</p>{settings.account === 'signed-out' ? <button type="button" className="button button--quiet" onClick={onLogin}>重新登录（演示）</button> : settings.account !== 'disabled' && <button type="button" className="button button--quiet" onClick={availability === 'disabled' || availability === 'model-offline' || unavailable ? onFindExpert : onAccess}>{availability === 'disabled' || availability === 'model-offline' || unavailable ? '选择其他专家' : '管理模型接入'}</button>}</div>}
+          {availability === 'new-version' && (agent.version ?? 1) < 2 && <div className="service-block"><p>有新版本可用。本会话继续使用 v{agent.version ?? 1}，草稿和历史保留。</p><button type="button" className="button button--quiet" onClick={onNewVersion}>按最新版本新建会话</button></div>}
+          {fileError && <p className="service-block" role="alert">{fileError}</p>}
+          {draftAttachments.length > 0 && <p className="service-material-rule">已选文件 · 尚未上传或读取。支持 {fileRule.inputs.join(' / ')}；单个 {fileRule.fileMB} MB，最多 {fileRule.count} 个，总计 {fileRule.totalMB} MB。</p>}
+          {draftAttachments.length > 0 && <MessageAttachmentGroup attachments={draftAttachments} source="user" onRemove={removeAttachment} />}
+          <textarea disabled={unavailable} ref={composerInputRef} aria-label="发送消息" aria-describedby="composer-hint" rows={2} value={draft} onChange={(event) => onSessionChange({ draft: event.target.value })} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && event.nativeEvent.keyCode !== 229) { event.preventDefault(); event.currentTarget.form?.requestSubmit() } }} placeholder={unavailable ? '该专家当前不可用，历史对话仍可查看' : `发送给${agent.name}`} />
           <div className="composer__toolbar">
             <div className="composer__group">{!unavailable && <AttachmentUploadButton onFiles={addAttachments} />}</div>
-            <div className="composer__group"><Button className="composer__control" aria-expanded={composerPanel === 'model'} aria-controls="prototype-composer-model-panel" onPress={() => setComposerPanel((panel) => panel === 'model' ? null : 'model')}><Sparks aria-hidden /><span>{agent.model ?? 'deepseek-v4-pro'}</span><NavArrowDown aria-hidden /></Button><IconButton label="语音输入" icon={Microphone} onPress={() => setComposerPanel((panel) => panel === 'voice' ? null : 'voice')} /><Button type="submit" aria-label="发送" className="composer__send" isDisabled={unavailable || (!draft.trim() && !draftAttachments.length)}><ArrowUp aria-hidden /></Button></div>
+            <div className="composer__group"><Button className="composer__control" aria-expanded={composerPanel === 'model'} aria-controls="prototype-composer-model-panel" onPress={() => setComposerPanel((panel) => panel === 'model' ? null : 'model')}><Sparks aria-hidden /><span>{agent.model ?? 'deepseek-v4'}</span><NavArrowDown aria-hidden /></Button><IconButton label="语音输入" icon={Microphone} onPress={() => setComposerPanel((panel) => panel === 'voice' ? null : 'voice')} /><Button type="submit" aria-label="发送" className="composer__send" isDisabled={!!block || (!draft.trim() && !draftAttachments.length)}><ArrowUp aria-hidden /></Button></div>
           </div>
-          {composerPanel && <div className={`composer-popover composer-popover--${composerPanel}`} id={`prototype-composer-${composerPanel}-panel`} role="dialog" aria-label={composerPanel === 'model' ? '当前会话模型' : '语音输入说明'}>{composerPanel === 'model' ? <><strong>当前会话模型</strong><div className="composer-popover__options"><button type="button" className="is-active" onClick={() => setComposerPanel(null)}><span><b>{agent.model ?? 'deepseek-v4-pro'}</b><small>原型演示</small></span><Check aria-hidden /></button></div><p>此页面用于演示消息交互，尚未连接模型服务。</p></> : <><strong>语音输入</strong><p>语音输入暂未开放。</p><StatusLight tone="muted" label="暂未开放" /></>}</div>}
+          {composerPanel && <div className={`composer-popover composer-popover--${composerPanel}`} id={`prototype-composer-${composerPanel}-panel`} role="dialog" aria-label={composerPanel === 'model' ? '当前会话模型' : '语音输入说明'}>{composerPanel === 'model' ? <><strong>当前会话模型</strong><div className="composer-popover__options"><button type="button" className="is-active" onClick={() => setComposerPanel(null)}><span><b>{agent.model ?? 'deepseek-v4'}</b><small>原型演示</small></span><Check aria-hidden /></button></div><p>此页面用于演示消息交互，尚未连接模型服务。</p></> : <><strong>语音输入</strong><p>语音输入暂未开放。</p><StatusLight tone="muted" label="暂未开放" /></>}</div>}
         </div>
+        <div className="composer-hint" id="composer-hint"><span>Enter 发送<span className="composer-hint__separator">·</span>Shift + Enter 换行</span>{!isAssistantWelcome && <span>本地演示 · 未连接模型</span>}</div>
       </form>
       {isAssistantWelcome && <><NewConversationActions onPrompt={chooseStarter} onFindExpert={onFindExpert} /><p className="welcome-prototype-note">本地原型 · 暂未连接模型，刷新后重置</p></>}
       </div>
@@ -534,9 +618,13 @@ function DependencyGroup({ icon: Icon, title, items }: { icon: IconComponent; ti
   return <div><div className="dependency-groups__title"><Icon aria-hidden /><span>{title}</span></div>{items.map((item) => <p key={item}><Check aria-hidden />{item}</p>)}</div>
 }
 
-function PersonalCenterPage({ section, onSectionChange, userProfile, onAvatarChange, archivedConversations, onRestore, onDelete }: {
-  section: 'personal' | 'archives'
-  onSectionChange: (section: 'personal' | 'archives') => void
+function PersonalCenterPage({ section, onSectionChange, userProfile, onAvatarChange, archivedConversations, onRestore, onDelete, settings, onSettings, records, onBack }: {
+  settings: ServiceSettings
+  onSettings: (patch: Partial<ServiceSettings>) => void
+  records: ServiceRecord[]
+  onBack: () => void
+  section: 'personal' | 'archives' | 'model-access'
+  onSectionChange: (section: 'personal' | 'archives' | 'model-access') => void
   userProfile: UserProfile
   onAvatarChange: (avatarUrl: string) => void
   archivedConversations: Conversation[]
@@ -547,69 +635,25 @@ function PersonalCenterPage({ section, onSectionChange, userProfile, onAvatarCha
     <div className="workspace-page personal-center-layout">
       <nav className="personal-center-navigation" aria-label="个人中心菜单">
         <Button className="personal-center-navigation__item" aria-current={section === 'personal' ? 'page' : undefined} onPress={() => onSectionChange('personal')}><User aria-hidden />基本资料</Button>
+        <Button className="personal-center-navigation__item" aria-current={section === 'model-access' ? 'page' : undefined} onPress={() => onSectionChange('model-access')}><Link aria-hidden />模型接入</Button>
         <Button className="personal-center-navigation__item" aria-current={section === 'archives' ? 'page' : undefined} onPress={() => onSectionChange('archives')}><Archive aria-hidden />归档会话</Button>
       </nav>
       {section === 'personal' ? <DetailPage className="personal-center-page">
-        <ProfileSection profile={userProfile} onAvatarChange={onAvatarChange} />
-        <UsageSection />
-      </DetailPage> : <ArchivedConversationsPage conversations={archivedConversations} onRestore={onRestore} onDelete={onDelete} />}
+        <ProfileSection profile={userProfile} onAvatarChange={onAvatarChange} identity={settings.identity} />
+        <ServiceUsage settings={settings} records={records} />
+      </DetailPage> : section === 'model-access' ? <DetailPage className="personal-center-page"><ModelAccess settings={settings} change={onSettings} onBack={onBack} /></DetailPage> : <ArchivedConversationsPage conversations={archivedConversations} onRestore={onRestore} onDelete={onDelete} />}
     </div>
   )
 }
 
-function ProfileSection({ profile, onAvatarChange }: { profile: UserProfile; onAvatarChange: (avatarUrl: string) => void }): React.JSX.Element {
+function ProfileSection({ profile, onAvatarChange, identity }: { profile: UserProfile; onAvatarChange: (avatarUrl: string) => void; identity: ServiceSettings['identity'] }): React.JSX.Element {
   const changeAvatar = (file: File | null): void => {
     if (!file) return
     const reader = new FileReader()
     reader.onload = () => { if (typeof reader.result === 'string') onAvatarChange(reader.result) }
     reader.readAsDataURL(file)
   }
-  return <SettingsBlock title="个人资料"><div className="employee-identity-editor"><div className="employee-avatar-setting"><label className="avatar-upload"><input type="file" accept="image/png,image/jpeg,image/webp" aria-label="从本地上传个人头像" onChange={(event) => { changeAvatar(event.currentTarget.files?.[0] ?? null); event.currentTarget.value = '' }} /><Avatar label={profile.name || '本地用户'} initials={profile.name.trim().slice(0, 1) || '用'} color="#d7b36a" size="large" src={profile.avatarUrl} /><span className="avatar-upload__affordance" aria-hidden="true"><EditPencil /></span></label><small>上传头像</small></div><dl className="personal-profile-facts"><div><dt>姓名</dt><dd>{profile.name}</dd></div><div><dt>学号</dt><dd>{profile.studentId}<small>（示例）</small></dd></div></dl></div></SettingsBlock>
-}
-
-const exampleUsageRecords = [
-  { id: 'usage-assistant', content: '与助理对话', time: '09-17 09:30', tokens: 12800, creditsUsed: 12 },
-  { id: 'usage-research', content: '东南亚市场研究', time: '09-16 14:32', tokens: 24000, creditsUsed: 48 },
-  { id: 'usage-document', content: '文档整理', time: '09-16 12:26', tokens: 9600, creditsUsed: 18 },
-  { id: 'usage-product', content: '与产品经理对话', time: '09-15 16:10', tokens: 18400, creditsUsed: 24 },
-  ...Array.from({ length: 19 }, (_, index) => ({
-    id: `usage-history-${index}`,
-    content: ['与助理对话', '资料检索', '文档整理', '产品方案讨论'][index % 4],
-    time: `09-${String(14 - Math.floor(index / 2)).padStart(2, '0')} ${index % 2 === 0 ? '16:20' : '10:15'}`,
-    tokens: (index % 4 + 1) * 1800 + index * 120,
-    creditsUsed: (index % 4 + 1) * 3
-  }))
-]
-
-// Account balance is a separate demo snapshot, not a conversion from usage or currency.
-const exampleCreditBalance = 1000
-
-function UsageSection(): React.JSX.Element {
-  const [page, setPage] = useState(1)
-  const pageSize = 10
-  const pageCount = Math.max(1, Math.ceil(exampleUsageRecords.length / pageSize))
-  const pageStart = (page - 1) * pageSize
-  const visibleRecords = exampleUsageRecords.slice(pageStart, pageStart + pageSize)
-  const totalTokens = exampleUsageRecords.reduce((total, record) => total + record.tokens, 0)
-
-  return <>
-    <SettingsBlock title="用量概览"><div className="usage-summary"><div><span>Token 总用量</span><strong>{totalTokens.toLocaleString('zh-CN')} Token</strong><small>按全部示例用量记录统计</small></div><div><span>积分余额</span><strong>{exampleCreditBalance.toLocaleString('zh-CN')} 积分</strong><small>可用积分 · 示例数据</small></div></div></SettingsBlock>
-    <SettingsBlock title="用量记录">
-      <div className="usage-table-scroll"><table className="usage-rows" aria-label="用量记录">
-        <colgroup><col /><col /><col /><col /></colgroup>
-        <thead><tr><th scope="col">使用内容</th><th scope="col">时间</th><th scope="col">Token 用量</th><th scope="col">消耗积分</th></tr></thead>
-        <tbody>{visibleRecords.map((record) => <tr key={record.id}><td>{record.content}</td><td><strong>{record.time}</strong></td><td className="usage-row__tokens">{record.tokens.toLocaleString('zh-CN')} Token</td><td><em>{record.creditsUsed.toLocaleString('zh-CN')} 积分</em></td></tr>)}</tbody>
-      </table></div>
-      <nav className="usage-pagination" aria-label="用量记录分页">
-        <span role="status">第 {pageStart + 1}–{pageStart + visibleRecords.length} 条，共 {exampleUsageRecords.length} 条</span>
-        <div className="usage-pagination__controls">
-          <Button className="button button--quiet" isDisabled={page === 1} onPress={() => setPage((current) => Math.max(1, current - 1))}><NavArrowLeft aria-hidden />上一页</Button>
-          <span aria-label="当前页码">第 {page} / {pageCount} 页</span>
-          <Button className="button button--quiet" isDisabled={page === pageCount} onPress={() => setPage((current) => Math.min(pageCount, current + 1))}>下一页<NavArrowRight aria-hidden /></Button>
-        </div>
-      </nav>
-    </SettingsBlock>
-  </>
+  return <SettingsBlock title="个人资料"><div className="employee-identity-editor"><div className="employee-avatar-setting"><label className="avatar-upload"><input type="file" accept="image/png,image/jpeg,image/webp" aria-label="从本地上传个人头像" onChange={(event) => { changeAvatar(event.currentTarget.files?.[0] ?? null); event.currentTarget.value = '' }} /><Avatar label={profile.name || '本地用户'} initials={profile.name.trim().slice(0, 1) || '用'} color="#d7b36a" size="large" src={profile.avatarUrl} /><span className="avatar-upload__affordance" aria-hidden="true"><EditPencil /></span></label><small>上传头像</small></div><dl className="personal-profile-facts"><div><dt>姓名</dt><dd>{profile.name}</dd></div><div><dt>{identity === 'staff' ? '工号' : identity === 'student' ? '学号' : '校园编号'}</dt><dd>{identity === 'unknown' ? '未提供' : identity === 'staff' ? 'T20260001' : profile.studentId}<small>（校园身份样例 · 只读）</small></dd></div></dl></div></SettingsBlock>
 }
 
 function DetailDataRow({ title, description, value, tone }: { title: string; description: string; value: string; tone?: StatusTone }): React.JSX.Element {
@@ -630,11 +674,22 @@ function DetailModal({ view, capability, onClose }: { view: DetailView; capabili
 }
 
 export function App(): React.JSX.Element {
-  const [page, setPage] = useState<PageId>('messages')
+  const [page, setPage] = useState<PageId>(() => parseExpertPreview(window.location.hash) ? 'contacts' : 'messages')
+  const [settings, setSettings] = useState<ServiceSettings>(initialServiceSettings)
+  const [demoOpen, setDemoOpen] = useState(false)
+  const [records, setRecords] = useState<ServiceRecord[]>([])
+  const [publicPreview, setPublicPreview] = useState(() => parseExpertPreview(window.location.hash))
+  useEffect(() => { const update = () => { setPublicPreview(parseExpertPreview(window.location.hash)); setPage('contacts') }; window.addEventListener('hashchange', update); return () => window.removeEventListener('hashchange', update) }, [])
+  const changeSettings = (patch: Partial<ServiceSettings>) => setSettings(current => ({ ...current, ...patch, ...(patch.availability ? { availabilityAgentId: activeConversation?.agentId } : {}) }))
+  const recordCall = (record: ServiceRecord) => {
+    if (!records.some(r => r.id === record.id) && record.source === 'platform' && record.amount !== null) setSettings(current => ({ ...current, balance: Math.max(0, Math.round((current.balance - record.amount!) * 100) / 100) }))
+    setRecords(current => [record, ...current.filter(r => r.id !== record.id)])
+  }
   const [expertDraft, setExpertDraft] = useState<ExpertDraft>(blankExpertDraft)
   const [contextCollapsed, setContextCollapsed] = useState(false)
   const [customAgents, setCustomAgents] = useState<Agent[]>([])
-  const agentItems = [assistantAgent, ...initialAgents, ...catalogAgents, ...customAgents]
+  const previewAgent: Agent | undefined = publicPreview ? { id: publicPreview.id, name: publicPreview.name, initials: publicPreview.name.slice(0, 1), description: publicPreview.description, role: '学校发布', status: publicPreview.disabled ? '已停用' : '可对话', tone: 'success', color: '#85a9c7', model: publicPreview.model, version: publicPreview.version, preview: publicPreview, capabilities: [], deliveries: [] } : undefined
+  const agentItems = [assistantAgent, ...initialAgents, ...catalogAgents.filter(a => a.id !== previewAgent?.id), ...customAgents, ...(previewAgent ? [previewAgent] : [])]
   const [conversations, setConversations] = useState<Conversation[]>(initialConversations)
   const [conversationSessions, setConversationSessions] = useState<Record<string, ConversationSession>>({})
   // Unsent conversations remain drafts; only conversations with messages appear in history.
@@ -649,8 +704,8 @@ export function App(): React.JSX.Element {
   const activeConversation = conversations.find((item) => item.id === selectedConversation && !item.archived) ?? conversations.find((item) => !item.archived)
   const conversationAgent = agentItems.find((agent) => agent.id === activeConversation?.agentId)
   const navigate = (id: PageId): void => { setPage(id); setDetailView(null) }
-  const createConversation = (agent: Agent): void => {
-    const conversation: Conversation = { id: crypto.randomUUID(), title: `与${agent.name}对话`, preview: `${agent.name} · 新对话`, time: '刚刚', avatar: agent.initials, color: agent.color, agentId: agent.id, agentSnapshot: { ...agent }, isNew: true }
+  const createConversation = (agent: Agent, scenario?: ServiceScenario): void => {
+    const conversation: Conversation = { scenario, id: crypto.randomUUID(), title: `与${agent.name}对话`, preview: `${agent.name} · 新对话`, time: '刚刚', avatar: agent.initials, color: agent.color, agentId: agent.id, agentSnapshot: { ...agent, version: settings.availability === 'new-version' && settings.availabilityAgentId === agent.id ? Math.max(2, agent.version ?? 1) : agent.version ?? 1 }, isNew: true }
     setConversations((items) => [conversation, ...items])
     setSelectedConversation(conversation.id)
     setContextCollapsed(false)
@@ -687,7 +742,7 @@ export function App(): React.JSX.Element {
   const updateConversationSession = (id: string, patch: Partial<ConversationSession>): void => {
     setConversationSessions((items) => ({ ...items, [id]: { ...(items[id] ?? emptyConversationSession), ...patch } }))
     const lastMessage = patch.messages?.at(-1)
-    if (lastMessage) setConversations((items) => items.map((item) => item.id === id ? { ...item, title: item.isNew && patch.messages?.length === 1 ? lastMessage.text.slice(0, 24) || '附件对话' : item.title, preview: `${agentItems.find((agent) => agent.id === item.agentId)?.name ?? item.agentSnapshot.name} · ${lastMessage.text || '已添加附件'}`, time: '刚刚' } : item))
+    if (lastMessage) setConversations((items) => items.map((item) => item.id === id ? { ...item, title: item.isNew && patch.messages?.length === 1 ? lastMessage.text.slice(0, 24) || '附件对话' : item.title, preview: `${agentItems.find((agent) => agent.id === item.agentId)?.name ?? item.agentSnapshot.name} · ${lastMessage.text || '已添加附件'}`, time: formatClientTimestamp(lastMessage.createdAt) } : item))
   }
   const openLinkedAgent = (): void => navigate('contacts')
   const isEmptyConversation = activeConversation?.isNew && !(conversationSessions[activeConversation.id]?.messages.length)
@@ -697,19 +752,20 @@ export function App(): React.JSX.Element {
   return (
     <ClientIconSystem>
       <AppShell className="campus-shell" contextCollapsed={contextCollapsed}
-        toolbar={<ClientToolbar label="页面顶部栏" title={toolbarTitle} support={toolbarSupport && <span className="campus-toolbar-support">{toolbarSupport}</span>} trailing={<span className="campus-preview-label">原型演示</span>} navigation={<ClientIconButton label={contextCollapsed ? '展开左侧栏' : '折叠左侧栏'} icon={contextCollapsed ? NavArrowRight : NavArrowLeft} onClick={() => setContextCollapsed((value) => !value)} />} />}
-        rail={<ClientRail expanded={!contextCollapsed} active={page === 'create-expert' ? 'contacts' : page} items={navItems} footerItems={[]} profileLabel="个人中心" profileActive={page === 'personal' || page === 'archives'} profileMenuItems={[{ id: 'personal', label: '个人中心', icon: User }, { id: 'archives', label: '归档会话', icon: Archive }]} userProfile={userProfile} onNavigate={(id) => { if (id === 'new-conversation') createConversation(assistantAgent); else if (id !== 'knowledge') navigate(id) }} header={<div className="campus-brand" title="西亚斯数字员工"><span className="campus-brand__mark" aria-hidden="true"><Sparks /></span><strong>西亚斯数字员工</strong></div>}>
+        toolbar={<ClientToolbar label="页面顶部栏" title={toolbarTitle} support={toolbarSupport && <span className="campus-toolbar-support">{toolbarSupport}</span>} trailing={<button className="button button--quiet campus-preview-label" onClick={() => setDemoOpen(true)}>原型演示</button>} navigation={<ClientIconButton label={contextCollapsed ? '展开左侧栏' : '折叠左侧栏'} icon={contextCollapsed ? NavArrowRight : NavArrowLeft} onClick={() => setContextCollapsed((value) => !value)} />} />}
+        rail={<ClientRail expanded={!contextCollapsed} active={page === 'create-expert' ? 'contacts' : page} items={navItems} footerItems={[]} profileLabel="个人中心" profileActive={page === 'personal' || page === 'archives' || page === 'model-access'} profileMenuItems={[{ id: 'personal', label: '个人中心', icon: User }, { id: 'archives', label: '归档会话', icon: Archive }]} userProfile={userProfile} onNavigate={(id) => { if (id === 'new-conversation') createConversation(assistantAgent); else if (id !== 'knowledge') navigate(id) }} header={<div className="campus-brand" title="西亚斯数字员工"><span className="campus-brand__mark" aria-hidden="true"><Sparks /></span><strong>西亚斯数字员工</strong></div>}>
           <DirectoryPane page="messages" conversations={conversationHistory} onArchiveConversation={archiveConversation} selectedConversation={page === 'messages' ? selectedConversation : ''} onConversation={(id) => { setSelectedConversation(id); navigate('messages') }} selectedCapability={selectedCapability} onCapability={setSelectedCapability} onOpenDetail={setDetailView} />
         </ClientRail>}
         context={null}>
-            {page === 'messages' && activeConversation && <MessagesPage key={activeConversation.id} conversation={activeConversation} agent={conversationAgent ?? activeConversation.agentSnapshot} unavailable={!conversationAgent} session={conversationSessions[activeConversation.id] ?? emptyConversationSession} onSessionChange={(patch) => updateConversationSession(activeConversation.id, patch)} userProfile={userProfile} onFindExpert={() => navigate('contacts')} />}
-            {page === 'contacts' && <AgentCatalogPage customAgents={customAgents} onCreateAgent={() => navigate('create-expert')} onStartConversation={(employee) => { const agent = agentItems.find((item) => item.id === employee.id); if (agent) createConversation(agent) }} />}
+            {page === 'messages' && activeConversation && <MessagesPage key={activeConversation.id} conversation={activeConversation} agent={activeConversation.agentSnapshot} unavailable={!conversationAgent || !!conversationAgent.preview?.disabled} settings={settings} onAccess={() => navigate('model-access')} onRecord={recordCall} onLogin={() => changeSettings({ account: 'active' })} onNewVersion={() => conversationAgent && createConversation(conversationAgent)} session={conversationSessions[activeConversation.id] ?? emptyConversationSession} onSessionChange={(patch) => updateConversationSession(activeConversation.id, patch)} userProfile={userProfile} onFindExpert={() => navigate('contacts')} />}
+            {page === 'contacts' && <AgentCatalogPage key={publicPreview ? `${publicPreview.id}-${publicPreview.version}-${publicPreview.disabled}` : 'catalog'} preview={publicPreview} customAgents={customAgents} onCreateAgent={() => navigate('create-expert')} onStartConversation={(employee) => { const agent = agentItems.find((item) => item.id === employee.id); if (agent) createConversation(agent) }} />}
             {page === 'create-expert' && <CreateExpertPage draft={expertDraft} onChange={setExpertDraft} onCreate={createStudentAgent} onBack={() => navigate('contacts')} />}
             {page === 'capabilities' && <CapabilityPage capability={activeCapability} onAgent={openLinkedAgent} onOpenDetail={setDetailView} />}
             {page === 'connections' && <ConnectionsPage />}
-            {(page === 'personal' || page === 'archives') && <PersonalCenterPage section={page} onSectionChange={navigate} userProfile={userProfile} onAvatarChange={(avatarUrl) => setUserProfile((profile) => ({ ...profile, avatarUrl }))} archivedConversations={archivedConversations} onRestore={restoreConversation} onDelete={deleteConversation} />}
+            {(page === 'personal' || page === 'archives' || page === 'model-access') && <PersonalCenterPage settings={settings} onSettings={changeSettings} records={records} onBack={() => navigate('messages')} section={page} onSectionChange={navigate} userProfile={userProfile} onAvatarChange={(avatarUrl) => setUserProfile((profile) => ({ ...profile, avatarUrl }))} archivedConversations={archivedConversations} onRestore={restoreConversation} onDelete={deleteConversation} />}
             {page === 'messages' && !activeConversation && <div className="conversation-empty-state"><h2>选择或新建会话开始</h2></div>}
       </AppShell>
+        <PrototypeScenarios open={demoOpen} close={() => setDemoOpen(false)} settings={settings} change={changeSettings} start={(scenario: ServiceScenario) => { changeSettings({ scenario, availability: 'active', account: 'active' }); const id = scenario.startsWith('notice') ? 'staff.notice-writer' : scenario === 'normal' ? 'assistant' : 'staff.literature-reader'; const agent = agentItems.find(a => a.id === id)!; createConversation(agent, scenario) }} />
         <DetailModal view={detailView} capability={activeCapability} onClose={() => setDetailView(null)} />
     </ClientIconSystem>
   )
